@@ -253,4 +253,46 @@
       });
     }, { threshold: 0 }).observe(canvas);
   }
+
+  /* ---------- copy email ---------- */
+  const copyBtn = $("[data-copy-email]");
+  const copyFeedback = $("[data-copy-feedback]");
+  if (copyBtn) {
+    let feedbackTimer;
+    const showFeedback = (msg) => {
+      if (!copyFeedback) return;
+      copyFeedback.textContent = msg;
+      copyFeedback.classList.add("is-visible");
+      clearTimeout(feedbackTimer);
+      feedbackTimer = setTimeout(() => {
+        copyFeedback.classList.remove("is-visible");
+        copyFeedback.textContent = "";
+      }, 1800);
+    };
+    const copyText = async (text) => {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    };
+    copyBtn.addEventListener("click", async () => {
+      const email = copyBtn.getAttribute("data-copy-email");
+      if (!email) return;
+      try {
+        await copyText(email);
+        showFeedback("Copied to clipboard");
+      } catch {
+        showFeedback("Couldn't copy — select the address instead");
+      }
+    });
+  }
 })();
