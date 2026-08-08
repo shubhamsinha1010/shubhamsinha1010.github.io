@@ -254,11 +254,12 @@
     }, { threshold: 0 }).observe(canvas);
   }
 
-  /* ---------- copy email ---------- */
-  const copyBtn = $("[data-copy-email]");
+  /* ---------- copy to clipboard ---------- */
+  const copyButtons = $$("[data-copy]");
   const copyFeedback = $("[data-copy-feedback]");
-  if (copyBtn) {
+  if (copyButtons.length) {
     let feedbackTimer;
+    const defaultCaption = copyFeedback?.dataset.default || "";
     const showFeedback = (msg) => {
       if (!copyFeedback) return;
       copyFeedback.textContent = msg;
@@ -266,7 +267,7 @@
       clearTimeout(feedbackTimer);
       feedbackTimer = setTimeout(() => {
         copyFeedback.classList.remove("is-visible");
-        copyFeedback.textContent = "";
+        copyFeedback.textContent = defaultCaption;
       }, 1800);
     };
     const copyText = async (text) => {
@@ -284,15 +285,27 @@
       document.execCommand("copy");
       ta.remove();
     };
-    copyBtn.addEventListener("click", async () => {
-      const email = copyBtn.getAttribute("data-copy-email");
-      if (!email) return;
-      try {
-        await copyText(email);
-        showFeedback("Copied to clipboard");
-      } catch {
-        showFeedback("Couldn't copy — select the address instead");
-      }
+    copyButtons.forEach((btn) => {
+      let restoreTimer;
+      btn.addEventListener("click", async () => {
+        const value = btn.getAttribute("data-copy");
+        if (!value) return;
+        try {
+          await copyText(value);
+          const copiedLabel = btn.dataset.copiedLabel || "✓ Copied to clipboard";
+          if (!btn.dataset.originalText) btn.dataset.originalText = btn.textContent.trim();
+          btn.textContent = copiedLabel;
+          btn.classList.add("is-copied");
+          showFeedback("✓ Copied to clipboard");
+          clearTimeout(restoreTimer);
+          restoreTimer = setTimeout(() => {
+            btn.textContent = btn.dataset.originalText;
+            btn.classList.remove("is-copied");
+          }, 1800);
+        } catch {
+          showFeedback("Couldn't copy — please select it manually");
+        }
+      });
     });
   }
 })();

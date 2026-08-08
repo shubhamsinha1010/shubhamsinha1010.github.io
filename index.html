@@ -502,30 +502,42 @@
         </h2>
         <p class="contact__lead">
           Open to Python backend &amp; AI engineer roles. The quickest way to reach me is email —
-          I usually reply within a day. Click the address to copy it.
+          I usually reply within a day.
         </p>
         <button
           type="button"
           class="contact__email"
-          data-copy-email="sinhashubham1911@gmail.com"
+          data-copy="sinhashubham1911@gmail.com"
           data-magnetic
+          title="Click to copy"
           aria-label="Copy email address sinhashubham1911@gmail.com"
         >
           sinhashubham1911@gmail.com
         </button>
-        <span class="contact__copied" data-copy-feedback aria-live="polite"></span>
+        <span class="contact__copied" data-copy-feedback data-default="Click to copy" aria-live="polite">Click to copy</span>
         <a
           class="contact__gmail"
           href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=sinhashubham1911@gmail.com"
           target="_blank"
           rel="noopener"
-        >Open in Gmail</a>
+          data-magnetic
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M22 6.5A2.5 2.5 0 0 0 19.5 4h-15A2.5 2.5 0 0 0 2 6.5v11A2.5 2.5 0 0 0 4.5 20h15a2.5 2.5 0 0 0 2.5-2.5v-11ZM4.5 6h15a.5.5 0 0 1 .5.5v.4l-8 5-8-5v-.4a.5.5 0 0 1 .5-.5Zm15 12h-15a.5.5 0 0 1-.5-.5V8.72l7.47 4.67a1 1 0 0 0 1.06 0L20 8.72V17.5a.5.5 0 0 1-.5.5Z" fill="currentColor"/></svg>
+          Or open in Gmail
+        </a>
         <div class="contact__links">
           <a href="https://github.com/shubhamsinha1010" target="_blank" rel="noopener">GitHub</a>
           <a href="https://www.linkedin.com/in/shubham010/" target="_blank" rel="noopener">LinkedIn</a>
           <a href="https://leetcode.com/u/sinhashubham1911/" target="_blank" rel="noopener">LeetCode</a>
           <a href="assets/resume.pdf" target="_blank" rel="noopener">Résumé</a>
-          <a href="tel:+918905169414">+91 89051 69414</a>
+          <button
+            type="button"
+            class="contact__linkbtn"
+            data-copy="+918905169414"
+            data-copied-label="✓ Copied"
+            title="Click to copy"
+            aria-label="Copy phone number +91 89051 69414"
+          >+91 89051 69414</button>
         </div>
       </div>
     </section>
