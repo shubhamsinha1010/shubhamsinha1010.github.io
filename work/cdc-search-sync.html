@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Near real-time CDC search sync — Case study · Shubham Sinha</title>
+  <meta name="description" content="Case study: replacing overnight Elasticsearch reindexes with a near real-time CDC pipeline — MySQL to Elasticsearch via Debezium and Kafka with idempotent consumers, retries and replayable backfill." />
+  <meta name="author" content="Shubham Sinha" />
+  <meta name="theme-color" content="#0a0a0b" />
+  <link rel="canonical" href="https://shubhamsinha1010.github.io/work/cdc-search-sync.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Near real-time CDC search sync · Case study" />
+  <meta property="og:description" content="From overnight reindexes to sub-minute MySQL to Elasticsearch sync with Debezium, Kafka and idempotent consumers." />
+  <meta property="og:image" content="https://shubhamsinha1010.github.io/assets/img/og-card.png" />
+  <meta property="og:url" content="https://shubhamsinha1010.github.io/work/cdc-search-sync.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://shubhamsinha1010.github.io/assets/img/og-card.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/case.css" />
+</head>
+<body>
+  <a href="#case" class="skip-link">Skip to content</a>
+  <div class="cursor-dot" data-cursor-dot></div>
+  <div class="cursor-ring" data-cursor-ring></div>
+  <div class="scroll-progress" data-scroll-progress></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="case-nav">
+    <a href="../index.html#work" class="case-nav__back" data-magnetic>
+      <svg viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to work
+    </a>
+    <div class="case-nav__actions">
+      <a href="../assets/resume.pdf" target="_blank" rel="noopener" class="nav__resume" data-magnetic>Résumé</a>
+      <a href="mailto:sinhashubham1911@gmail.com" class="nav__cta" data-magnetic>Let's talk</a>
+    </div>
+  </header>
+
+  <main class="case" id="case">
+    <div class="reveal">
+      <span class="case__eyebrow">Case study · Numerator</span>
+      <h1 class="case__title">Near real-time<br/>CDC search sync</h1>
+      <p class="case__summary">
+        Overnight full reindexes meant search could be up to a day stale. I replaced them with
+        a change-data-capture pipeline that streams MySQL writes into Elasticsearch in under a
+        minute — continuously, idempotently, and safe to replay.
+      </p>
+    </div>
+
+    <div class="case__meta reveal">
+      <div class="case__meta-item">
+        <span class="case__meta-label">Role</span>
+        <span class="case__meta-value">Backend engineer</span>
+      </div>
+      <div class="case__meta-item">
+        <span class="case__meta-label">Context</span>
+        <span class="case__meta-value">Billion-row search platform</span>
+      </div>
+      <div class="case__meta-item">
+        <span class="case__meta-label">Stack</span>
+        <span class="case__meta-value">Debezium · Kafka · Elasticsearch · Python</span>
+      </div>
+    </div>
+
+    <section class="case__section reveal">
+      <h2>The problem</h2>
+      <p class="case__lead">
+        Search was only as fresh as last night's batch job.
+      </p>
+      <p>
+        The product served search over a very large MySQL store, and the index was rebuilt by an
+        <strong>overnight full reindex</strong>. That meant a price change, a new product or a
+        corrected attribute could take hours — sometimes most of a day — to show up in results.
+        The reindex was also expensive: it hammered the database, took a long window to run, and
+        an intraday correction meant either waiting or triggering another costly rebuild.
+      </p>
+      <p>
+        What the platform actually needed was <strong>continuous</strong> sync: when a row changes
+        in MySQL, that change should be reflected in search seconds later, without reprocessing
+        everything else.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>The approach</h2>
+      <p>
+        I moved from batch to a streaming <strong>change-data-capture</strong> pipeline. Instead of
+        polling or dumping tables, the pipeline reads the database's binary log, turns each committed
+        change into an event, and applies it to Elasticsearch.
+      </p>
+      <ul>
+        <li><strong>Debezium</strong> tails the MySQL binlog and emits an ordered stream of row-level change events — inserts, updates and deletes — without adding load to application queries.</li>
+        <li><strong>Kafka</strong> buffers those events per table, decoupling capture speed from indexing speed and giving the system a durable, replayable log.</li>
+        <li><strong>Idempotent consumers</strong> transform events and upsert into Elasticsearch keyed by document id, so re-delivering the same event is harmless — the basis for safe retries and exactly-once effect.</li>
+        <li><strong>Retries + dead-letter</strong> handling keep a single poison message from stalling the stream, and a <strong>replayable backfill</strong> can rebuild any slice of the index from the log.</li>
+      </ul>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Architecture</h2>
+      <div class="case__diagram">
+        <svg viewBox="0 0 820 300" role="img" aria-label="CDC architecture: MySQL binlog captured by Debezium into Kafka topics, consumed by idempotent consumers that upsert into Elasticsearch, with a replayable backfill feeding Kafka.">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#c7f94b"/>
+            </marker>
+            <marker id="arrowdim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#8a8a95"/>
+            </marker>
+          </defs>
+
+          <!-- top pipeline -->
+          <rect class="dg-box" x="20" y="30" width="120" height="58" rx="10"/>
+          <text class="dg-label" x="80" y="56" text-anchor="middle">MySQL</text>
+          <text class="dg-sub" x="80" y="74" text-anchor="middle">source DB</text>
+
+          <rect class="dg-box" x="180" y="30" width="150" height="58" rx="10"/>
+          <text class="dg-label" x="255" y="56" text-anchor="middle">Debezium</text>
+          <text class="dg-sub" x="255" y="74" text-anchor="middle">binlog connector</text>
+
+          <rect class="dg-box" x="380" y="30" width="120" height="58" rx="10"/>
+          <text class="dg-label" x="440" y="56" text-anchor="middle">Kafka</text>
+          <text class="dg-sub" x="440" y="74" text-anchor="middle">topic per table</text>
+
+          <rect class="dg-box dg-box--accent" x="560" y="30" width="200" height="58" rx="10"/>
+          <text class="dg-label" x="660" y="52" text-anchor="middle">Consumers</text>
+          <text class="dg-sub" x="660" y="70" text-anchor="middle">idempotent · retries · DLQ</text>
+
+          <!-- elasticsearch -->
+          <rect class="dg-box" x="560" y="206" width="200" height="60" rx="10"/>
+          <text class="dg-label" x="660" y="232" text-anchor="middle">Elasticsearch</text>
+          <text class="dg-sub" x="660" y="250" text-anchor="middle">search index</text>
+
+          <!-- backfill -->
+          <rect class="dg-box" x="380" y="206" width="120" height="60" rx="10"/>
+          <text class="dg-label" x="440" y="232" text-anchor="middle">Backfill</text>
+          <text class="dg-sub" x="440" y="250" text-anchor="middle">replayable job</text>
+
+          <!-- flows -->
+          <path class="dg-flow" d="M140 59 L176 59"/>
+          <text class="dg-flow-label" x="138" y="24">binlog</text>
+          <path class="dg-flow" d="M330 59 L376 59"/>
+          <text class="dg-flow-label" x="330" y="24">events</text>
+          <path class="dg-flow" d="M500 59 L556 59"/>
+          <text class="dg-flow-label" x="500" y="24">consume</text>
+          <path class="dg-flow" d="M660 88 L660 204"/>
+          <text class="dg-flow-label" x="668" y="152">idempotent upsert</text>
+          <path class="dg-flow--dim" d="M440 204 L440 90"/>
+          <text class="dg-flow-label" x="300" y="150">replay / backfill</text>
+        </svg>
+        <p class="case__diagram-cap">Committed row changes flow from binlog to search in seconds; the log makes backfills a replay, not a rebuild.</p>
+      </div>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Key decisions</h2>
+      <h3>Capture the log, don't poll the tables</h3>
+      <p>
+        Reading the binlog with Debezium gives an <strong>ordered, low-overhead</strong> stream of
+        exactly what changed, in commit order. Polling would have added query load and still missed
+        deletes and rapid successive updates.
+      </p>
+      <h3>Make writes idempotent</h3>
+      <p>
+        Every consumer upserts by document id, so redelivery — which <em>will</em> happen with
+        at-least-once messaging — converges to the same result. That single property is what makes
+        retries, restarts and backfills safe instead of scary.
+      </p>
+      <h3>Treat the log as the recovery tool</h3>
+      <p>
+        Because Kafka retains the change stream, rebuilding part of the index becomes a
+        <strong>replay</strong> from an offset rather than another full, database-crushing reindex.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Outcome</h2>
+      <div class="case__results">
+        <div class="case__result">
+          <span class="case__result-num">&lt;60s</span>
+          <span class="case__result-label">MySQL → search sync, down from an overnight batch</span>
+        </div>
+        <div class="case__result">
+          <span class="case__result-num">Continuous</span>
+          <span class="case__result-label">streaming sync replaced scheduled full reindexes</span>
+        </div>
+        <div class="case__result">
+          <span class="case__result-num">Replayable</span>
+          <span class="case__result-label">idempotent upserts make retries &amp; backfills safe</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Stack</h2>
+      <div class="case__stack">
+        <span>Debezium</span><span>Kafka</span><span>Elasticsearch</span><span>MySQL</span><span>Python</span><span>Celery</span>
+      </div>
+    </section>
+
+    <div class="case__cta reveal">
+      <p>More context on the search platform is on my résumé.</p>
+      <a href="../assets/resume.pdf" target="_blank" rel="noopener" class="btn btn--primary" data-magnetic><span>Download résumé</span></a>
+      <a href="../index.html#work" class="btn btn--ghost" data-magnetic><span>Back to all work</span></a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>© <span data-year>2026</span> Shubham Sinha</span>
+    <a href="../index.html#top" class="footer__top" data-magnetic>Back to portfolio ↑</a>
+  </footer>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>

@@ -327,7 +327,15 @@ body::before {
 .project-card__links a:hover { color: var(--accent); }
 .project-card__badge { font-family: var(--font-mono); font-size: 0.68rem; padding: 3px 9px; border-radius: 100px; border: 1px solid var(--border); color: var(--text-dim); }
 .project-card__title { font-size: 1.25rem; font-weight: 600; margin-bottom: 10px; }
-.project-card__desc { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 18px; flex: 1; }
+.project-card__desc { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 14px; flex: 1; }
+.project-card__caselink { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); transition: opacity 0.25s; }
+.project-card__caselink:hover { opacity: 0.75; }
+.project-card__metric {
+  display: inline-flex; align-items: baseline; gap: 8px; align-self: flex-start;
+  font-size: 0.82rem; color: var(--text-dim); margin-bottom: 16px;
+  padding: 6px 12px; border: 1px solid var(--border); border-radius: 100px; background: var(--accent-soft);
+}
+.project-card__metric strong { font-family: var(--font-mono); color: var(--accent); font-weight: 600; }
 .project-card__tags { display: flex; flex-wrap: wrap; gap: 7px; }
 .project-card__tags span { font-family: var(--font-mono); font-size: 0.72rem; padding: 4px 10px; border: 1px solid var(--border); border-radius: 100px; color: var(--text-dim); }
 
