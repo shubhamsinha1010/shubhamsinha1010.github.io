@@ -295,6 +295,51 @@
         <h2 class="section__title">Selected Work</h2>
       </div>
 
+      <!-- Featured: PulseSearch -->
+      <article class="project project--featured reveal" data-tilt>
+        <div class="project__glow"></div>
+        <div class="project__content">
+          <span class="project__label">Featured project</span>
+          <h3 class="project__title">PulseSearch</h3>
+          <p class="project__desc">
+            A real-time, AI-native search system over a live data firehose. Change data capture
+            streams every row change from MySQL through Debezium + Kafka into Elasticsearch, served
+            as hybrid BM25 + vector search and a grounded RAG assistant on a local LLM — the whole
+            stack runs on Docker Compose with Prometheus/Grafana SLOs.
+          </p>
+          <ul class="project__highlights">
+            <li>Effectively-once indexing on at-least-once delivery via version-guarded upserts, replayable backfill &amp; dead-letter isolation</li>
+            <li>Hybrid retrieval: BM25 + kNN fused with Reciprocal Rank Fusion, with per-hit rank provenance</li>
+            <li>Grounded RAG with citations, freshness guarantees, and sub-second CDC-to-searchable latency tracked in Grafana</li>
+          </ul>
+          <div class="project__tags">
+            <span>FastAPI</span><span>Kafka</span><span>Debezium</span><span>Elasticsearch</span><span>RAG</span><span>Next.js</span><span>Docker</span>
+          </div>
+          <div class="project__links">
+            <a href="work/pulsesearch.html" class="project__link" data-magnetic>
+              Read case study
+              <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="https://github.com/shubhamsinha1010/pulsesearch-cdc-rag" target="_blank" rel="noopener" class="project__link project__link--ghost" data-magnetic>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+              View source
+            </a>
+            <a href="https://deepwiki.com/shubhamsinha1010/pulsesearch-cdc-rag" target="_blank" rel="noopener" class="project__link project__link--ghost" data-magnetic>Architecture wiki</a>
+          </div>
+        </div>
+        <div class="project__visual">
+          <div class="pipeline" data-pipeline>
+            <div class="pipeline__node" data-node><span>Firehose</span></div>
+            <div class="pipeline__node" data-node><span>CDC</span></div>
+            <div class="pipeline__node" data-node><span>Index</span></div>
+            <div class="pipeline__node" data-node><span>RAG</span></div>
+            <svg class="pipeline__wires" viewBox="0 0 100 200" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M50 20 V50" class="wire"/><path d="M50 70 V100" class="wire"/><path d="M50 120 V150" class="wire"/>
+            </svg>
+          </div>
+        </div>
+      </article>
+
       <!-- Featured: CricLot -->
       <article class="project project--featured reveal" data-tilt>
         <div class="project__glow"></div>

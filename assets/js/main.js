@@ -172,16 +172,18 @@
   }, { threshold: 0.6 });
   $$("[data-count]").forEach((el) => countObserver.observe(el));
 
-  /* ---------- pipeline sequence (CricLot motif) ---------- */
-  const pipeline = $("[data-pipeline]");
-  if (pipeline && !prefersReduced) {
-    const nodes = $$("[data-node]", pipeline);
-    let i = 0;
-    setInterval(() => {
-      nodes.forEach((n) => n.classList.remove("is-live"));
-      nodes[i % nodes.length].classList.add("is-live");
-      i++;
-    }, 900);
+  /* ---------- pipeline sequence (featured project motifs) ---------- */
+  if (!prefersReduced) {
+    $$("[data-pipeline]").forEach((pipeline) => {
+      const nodes = $$("[data-node]", pipeline);
+      if (!nodes.length) return;
+      let i = 0;
+      setInterval(() => {
+        nodes.forEach((n) => n.classList.remove("is-live"));
+        nodes[i % nodes.length].classList.add("is-live");
+        i++;
+      }, 900);
+    });
   }
 
   /* ---------- hero particle canvas ---------- */
