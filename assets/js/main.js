@@ -111,11 +111,20 @@
     const isOpen = open ?? !nav.classList.contains("is-open");
     nav.classList.toggle("is-open", isOpen);
     mobileMenu?.classList.toggle("is-open", isOpen);
+    mobileMenu?.setAttribute("aria-hidden", String(!isOpen));
     burger?.setAttribute("aria-expanded", String(isOpen));
     document.body.style.overflow = isOpen ? "hidden" : "";
+    if (isOpen) {
+      $("[data-mm-link]", mobileMenu)?.focus();
+    } else {
+      burger?.focus();
+    }
   };
   burger?.addEventListener("click", () => toggleMenu());
   $$("[data-mm-link]").forEach((a) => a.addEventListener("click", () => toggleMenu(false)));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && nav?.classList.contains("is-open")) toggleMenu(false);
+  });
 
   /* ---------- active section highlight ---------- */
   const navLinks = $$("[data-nav-link]");

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="glow1" cx="82%" cy="0%" r="70%">
+      <stop offset="0%" stop-color="#c7f94b" stop-opacity="0.16"/>
+      <stop offset="60%" stop-color="#c7f94b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0%" cy="90%" r="70%">
+      <stop offset="0%" stop-color="#7cf5d1" stop-opacity="0.12"/>
+      <stop offset="60%" stop-color="#7cf5d1" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#0a0a0b"/>
+  <rect width="1200" height="630" fill="url(#glow1)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+  <rect x="1" y="1" width="1198" height="628" fill="none" stroke="#ffffff" stroke-opacity="0.08" stroke-width="2"/>
+
+  <g transform="translate(80, 80)">
+    <rect width="64" height="64" rx="16" fill="#c7f94b"/>
+    <text x="32" y="44" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="700" fill="#0a0a0b" text-anchor="middle">SS</text>
+  </g>
+  <text x="164" y="122" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#f4f4f5">Shubham Sinha</text>
+
+  <text x="80" y="300" font-family="Helvetica, Arial, sans-serif" font-size="76" font-weight="700" fill="#f4f4f5" letter-spacing="-2">Backend engineer building</text>
+  <text x="80" y="392" font-family="Helvetica, Arial, sans-serif" font-size="76" font-weight="700" fill="#f4f4f5" letter-spacing="-2">systems that <tspan fill="#c7f94b">search,</tspan></text>
+  <text x="80" y="484" font-family="Helvetica, Arial, sans-serif" font-size="76" font-weight="700" fill="#c7f94b" letter-spacing="-2">sync &amp; scale.</text>
+
+  <text x="80" y="566" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="500" fill="#8a8a95">Elasticsearch / Kafka / CDC / Django / FastAPI / AWS</text>
+</svg>
