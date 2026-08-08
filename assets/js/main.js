@@ -151,11 +151,14 @@
   $$(".reveal").forEach((el) => revObserver.observe(el));
 
   /* ---------- animated counters ---------- */
+  /* Final values live in the HTML so crawlers / LLMs / no-JS see 50%, <60s, 19M+ —
+     not the animation seed "0". JS only rewrites the text when animating. */
   const animateCount = (el) => {
     const target = parseFloat(el.dataset.count);
     const suffix = el.dataset.suffix || "";
     const dur = 1400;
     const start = performance.now();
+    el.textContent = "0" + suffix;
     const step = (now) => {
       const t = Math.min((now - start) / dur, 1);
       const eased = 1 - Math.pow(1 - t, 3);
@@ -165,12 +168,14 @@
     };
     requestAnimationFrame(step);
   };
-  const countObserver = new IntersectionObserver((entries, obs) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) { animateCount(entry.target); obs.unobserve(entry.target); }
-    });
-  }, { threshold: 0.6 });
-  $$("[data-count]").forEach((el) => countObserver.observe(el));
+  if (!prefersReduced) {
+    const countObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) { animateCount(entry.target); obs.unobserve(entry.target); }
+      });
+    }, { threshold: 0.6 });
+    $$("[data-count]").forEach((el) => countObserver.observe(el));
+  }
 
   /* ---------- pipeline sequence (featured project motifs) ---------- */
   if (!prefersReduced) {
