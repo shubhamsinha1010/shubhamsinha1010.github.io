@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catalog search platform — Case study · Shubham Sinha</title>
+  <meta name="description" content="Case study: a product catalog search platform on FastAPI + Elasticsearch combining BM25 and dense vectors, with a Hugging Face classifier that auto-assigns brand and category facets on ingest." />
+  <meta name="author" content="Shubham Sinha" />
+  <meta name="theme-color" content="#0a0a0b" />
+  <link rel="canonical" href="https://shubhamsinha1010.github.io/work/catalog-search.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Catalog search platform · Case study" />
+  <meta property="og:description" content="Hybrid BM25 + dense-vector product search with automatic brand/category attribution on ingest." />
+  <meta property="og:image" content="https://shubhamsinha1010.github.io/assets/img/og-card.png" />
+  <meta property="og:url" content="https://shubhamsinha1010.github.io/work/catalog-search.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://shubhamsinha1010.github.io/assets/img/og-card.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+  <link rel="preload" href="../assets/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="../assets/css/fonts.css" />
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/case.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Catalog search platform — case study",
+    "description": "A product catalog search platform on FastAPI + Elasticsearch combining BM25 and dense vectors, with a Hugging Face classifier that auto-assigns brand and category facets on ingest.",
+    "author": { "@type": "Person", "name": "Shubham Sinha", "url": "https://shubhamsinha1010.github.io/" },
+    "mainEntityOfPage": "https://shubhamsinha1010.github.io/work/catalog-search.html",
+    "about": ["Elasticsearch", "Information Retrieval", "BM25", "Dense Vectors", "Hugging Face", "FastAPI"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://shubhamsinha1010.github.io/" },
+      { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://shubhamsinha1010.github.io/#work" },
+      { "@type": "ListItem", "position": 3, "name": "Catalog search platform", "item": "https://shubhamsinha1010.github.io/work/catalog-search.html" }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a href="#case" class="skip-link">Skip to content</a>
+  <div class="cursor-dot" data-cursor-dot></div>
+  <div class="cursor-ring" data-cursor-ring></div>
+  <div class="scroll-progress" data-scroll-progress></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="case-nav">
+    <a href="../index.html#work" class="case-nav__back" data-magnetic>
+      <svg viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to work
+    </a>
+    <div class="case-nav__actions">
+      <a href="../assets/resume.pdf" target="_blank" rel="noopener" class="nav__resume" data-magnetic>Résumé</a>
+      <a href="mailto:sinhashubham1911@gmail.com" class="nav__cta" data-magnetic>Let's talk</a>
+    </div>
+  </header>
+
+  <main class="case" id="case">
+    <div class="reveal">
+      <span class="case__eyebrow">Case study · Numerator</span>
+      <h1 class="case__title">Catalog search<br/>platform</h1>
+      <p class="case__summary">
+        Keyword-only search kept missing brand and category variants, and new products
+        landed under the wrong facets. I built hybrid retrieval over Elasticsearch and a
+        classifier that files every product correctly the moment it's ingested.
+      </p>
+    </div>
+
+    <div class="case__meta reveal">
+      <div class="case__meta-item">
+        <span class="case__meta-label">Role</span>
+        <span class="case__meta-value">Backend / ML engineer</span>
+      </div>
+      <div class="case__meta-item">
+        <span class="case__meta-label">Context</span>
+        <span class="case__meta-value">Multi-country product catalogs</span>
+      </div>
+      <div class="case__meta-item">
+        <span class="case__meta-label">Stack</span>
+        <span class="case__meta-value">FastAPI · Elasticsearch · Hugging Face · spaCy</span>
+      </div>
+    </div>
+
+    <section class="case__section reveal">
+      <h2>The problem</h2>
+      <p class="case__lead">
+        Good products were invisible because they were filed — and matched — the wrong way.
+      </p>
+      <p>
+        Product search ran on classic keyword matching, which is unforgiving of the way people
+        actually type. Brand spellings, abbreviations and category synonyms meant a query could
+        miss items that were obviously relevant. The problem compounded on ingest: new products
+        frequently landed under the <strong>wrong brand or category facet</strong>, so even a
+        perfect query couldn't surface them.
+      </p>
+      <p>
+        Two different failures, one symptom — relevant products that users simply never saw.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>The approach</h2>
+      <p>
+        I attacked both the query side and the ingest side, because fixing one without the other
+        still leaves results wrong.
+      </p>
+      <ul>
+        <li><strong>Hybrid retrieval</strong> — combining <strong>BM25</strong> keyword scoring with <strong>dense vector</strong> similarity, so semantically related brand and category variants surface even when the exact tokens don't match.</li>
+        <li><strong>Classification on ingest</strong> — a fine-tuned <strong>Hugging Face</strong> model, with <strong>spaCy</strong> preprocessing, assigns brand and category facets automatically as each product enters the index.</li>
+        <li><strong>Multi-catalog tuning</strong> — the model was tuned across US / CA / DE catalogs so attribution holds up across markets rather than overfitting to one.</li>
+      </ul>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Architecture</h2>
+      <div class="case__diagram">
+        <svg viewBox="0 0 840 300" role="img" aria-label="Catalog search architecture: an ingest lane classifies products with spaCy and a Hugging Face model before indexing into Elasticsearch, while a query lane runs hybrid BM25 plus dense-vector retrieval to return ranked results.">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#c7f94b"/>
+            </marker>
+            <marker id="arrowdim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#8a8a95"/>
+            </marker>
+          </defs>
+
+          <!-- ingest lane (top) -->
+          <text class="dg-sub" x="20" y="20">Ingest</text>
+          <rect class="dg-box" x="20" y="30" width="120" height="52" rx="10"/>
+          <text class="dg-label" x="80" y="54" text-anchor="middle">New product</text>
+          <text class="dg-sub" x="80" y="70" text-anchor="middle">raw record</text>
+
+          <rect class="dg-box" x="170" y="30" width="120" height="52" rx="10"/>
+          <text class="dg-label" x="230" y="54" text-anchor="middle">spaCy</text>
+          <text class="dg-sub" x="230" y="70" text-anchor="middle">preprocess</text>
+
+          <rect class="dg-box dg-box--accent" x="320" y="30" width="160" height="52" rx="10"/>
+          <text class="dg-label" x="400" y="54" text-anchor="middle">HF classifier</text>
+          <text class="dg-sub" x="400" y="70" text-anchor="middle">brand · category</text>
+
+          <!-- query lane (bottom) -->
+          <text class="dg-sub" x="20" y="218">Query</text>
+          <rect class="dg-box" x="20" y="228" width="120" height="52" rx="10"/>
+          <text class="dg-label" x="80" y="252" text-anchor="middle">User query</text>
+          <text class="dg-sub" x="80" y="268" text-anchor="middle">free text</text>
+
+          <rect class="dg-box" x="170" y="228" width="230" height="52" rx="10"/>
+          <text class="dg-label" x="285" y="252" text-anchor="middle">Hybrid retrieval</text>
+          <text class="dg-sub" x="285" y="268" text-anchor="middle">BM25 + dense vectors</text>
+
+          <!-- elasticsearch + results -->
+          <rect class="dg-box" x="520" y="124" width="150" height="56" rx="10"/>
+          <text class="dg-label" x="595" y="148" text-anchor="middle">Elasticsearch</text>
+          <text class="dg-sub" x="595" y="166" text-anchor="middle">faceted index</text>
+
+          <rect class="dg-box" x="700" y="124" width="120" height="56" rx="10"/>
+          <text class="dg-label" x="760" y="148" text-anchor="middle">Results</text>
+          <text class="dg-sub" x="760" y="166" text-anchor="middle">ranked</text>
+
+          <!-- flows ingest -->
+          <path class="dg-flow" d="M140 56 L166 56"/>
+          <path class="dg-flow" d="M290 56 L316 56"/>
+          <path class="dg-flow" d="M480 56 L522 122"/>
+          <text class="dg-flow-label" x="486" y="96">index + facets</text>
+
+          <!-- flows query -->
+          <path class="dg-flow" d="M140 254 L166 254"/>
+          <path class="dg-flow" d="M400 254 L522 182"/>
+          <text class="dg-flow-label" x="430" y="214">search</text>
+
+          <!-- results -->
+          <path class="dg-flow" d="M670 152 L696 152"/>
+        </svg>
+        <p class="case__diagram-cap">One index, two lanes: products are classified before indexing; queries blend keyword and vector relevance.</p>
+      </div>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Key decisions</h2>
+      <h3>Fix relevance and attribution together</h3>
+      <p>
+        Hybrid retrieval only pays off if products are filed correctly, and correct facets only
+        matter if the query can reach them. Treating ingest and query as <strong>one problem</strong>
+        is what actually moved results.
+      </p>
+      <h3>Classify at ingest, not at query time</h3>
+      <p>
+        Assigning facets when a product enters the index keeps queries fast and lets the whole
+        catalog benefit from every model improvement on the next reindex — no per-request inference.
+      </p>
+      <h3>Tune across markets</h3>
+      <p>
+        Validating on US, CA and DE catalogs kept the classifier honest, so gains reflected real
+        generalization rather than one market's quirks.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Outcome</h2>
+      <div class="case__results">
+        <div class="case__result">
+          <span class="case__result-num">+23%</span>
+          <span class="case__result-label">brand / category attribution accuracy</span>
+        </div>
+        <div class="case__result">
+          <span class="case__result-num">Hybrid</span>
+          <span class="case__result-label">BM25 + dense vectors recover variants keyword search missed</span>
+        </div>
+        <div class="case__result">
+          <span class="case__result-num">Auto</span>
+          <span class="case__result-label">new products self-file under the right facets on ingest</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Stack</h2>
+      <div class="case__stack">
+        <span>FastAPI</span><span>Elasticsearch</span><span>Hugging Face</span><span>spaCy</span><span>Transformers</span><span>Python</span>
+      </div>
+    </section>
+
+    <div class="case__cta reveal">
+      <p>More on the search platform is on my résumé.</p>
+      <a href="../assets/resume.pdf" target="_blank" rel="noopener" class="btn btn--primary" data-magnetic><span>Download résumé</span></a>
+      <a href="../index.html#work" class="btn btn--ghost" data-magnetic><span>Back to all work</span></a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>© <span data-year>2026</span> Shubham Sinha</span>
+    <a href="../index.html#top" class="footer__top" data-magnetic>Back to portfolio ↑</a>
+  </footer>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>

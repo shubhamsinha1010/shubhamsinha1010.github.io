@@ -19,12 +19,35 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="preload" href="../assets/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="../assets/css/fonts.css" />
 
   <link rel="stylesheet" href="../assets/css/style.css" />
   <link rel="stylesheet" href="../assets/css/case.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Near real-time CDC search sync",
+    "description": "Replacing overnight Elasticsearch reindexes with a near real-time change-data-capture pipeline from MySQL via Debezium and Kafka with idempotent consumers and replayable backfill.",
+    "author": { "@type": "Person", "name": "Shubham Sinha", "url": "https://shubhamsinha1010.github.io/" },
+    "mainEntityOfPage": "https://shubhamsinha1010.github.io/work/cdc-search-sync.html",
+    "about": ["Change Data Capture", "Debezium", "Kafka", "Elasticsearch", "MySQL", "Idempotency"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://shubhamsinha1010.github.io/" },
+      { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://shubhamsinha1010.github.io/#work" },
+      { "@type": "ListItem", "position": 3, "name": "CDC search sync", "item": "https://shubhamsinha1010.github.io/work/cdc-search-sync.html" }
+    ]
+  }
+  </script>
 </head>
 <body>
   <a href="#case" class="skip-link">Skip to content</a>

@@ -49,10 +49,10 @@
   }
   </script>
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <!-- Fonts (self-hosted) -->
+  <link rel="preload" href="assets/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/css/fonts.css" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
@@ -346,7 +346,7 @@
           <div class="project-card__top">
             <span class="project-card__icon">🔎</span>
             <div class="project-card__links">
-              <span class="project-card__badge">Work</span>
+              <a href="work/catalog-search.html" class="project-card__caselink" data-magnetic>Case study →</a>
             </div>
           </div>
           <h3 class="project-card__title">Catalog Search Platform</h3>
