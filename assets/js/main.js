@@ -191,73 +191,10 @@
     });
   }
 
-  /* ---------- hero particle canvas ---------- */
-  const canvas = $("[data-hero-canvas]");
-  if (canvas && !prefersReduced && !isTouch) {
-    const ctx = canvas.getContext("2d");
-    let w, h, dpr, particles, raf;
-    const mouse = { x: -999, y: -999 };
-
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.width = canvas.offsetWidth * dpr;
-      h = canvas.height = canvas.offsetHeight * dpr;
-      const count = Math.min(Math.floor((canvas.offsetWidth * canvas.offsetHeight) / 14000), 90);
-      particles = Array.from({ length: count }, () => ({
-        x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.25 * dpr, vy: (Math.random() - 0.5) * 0.25 * dpr,
-      }));
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
-      const maxDist = 130 * dpr;
-      for (let a = 0; a < particles.length; a++) {
-        const p = particles[a];
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > w) p.vx *= -1;
-        if (p.y < 0 || p.y > h) p.vy *= -1;
-
-        const mdx = p.x - mouse.x, mdy = p.y - mouse.y;
-        const md = Math.hypot(mdx, mdy);
-        if (md < 120 * dpr) { p.x += mdx / md * 0.6; p.y += mdy / md * 0.6; }
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.5 * dpr, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(199, 249, 75, 0.55)";
-        ctx.fill();
-
-        for (let b = a + 1; b < particles.length; b++) {
-          const q = particles[b];
-          const d = Math.hypot(p.x - q.x, p.y - q.y);
-          if (d < maxDist) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-            ctx.strokeStyle = `rgba(160, 170, 140, ${0.14 * (1 - d / maxDist)})`;
-            ctx.lineWidth = dpr * 0.6;
-            ctx.stroke();
-          }
-        }
-      }
-      raf = requestAnimationFrame(draw);
-    };
-
-    window.addEventListener("mousemove", (e) => {
-      const r = canvas.getBoundingClientRect();
-      mouse.x = (e.clientX - r.left) * dpr; mouse.y = (e.clientY - r.top) * dpr;
-    });
-    window.addEventListener("mouseout", () => { mouse.x = -999; mouse.y = -999; });
-    window.addEventListener("resize", resize);
-    resize(); draw();
-
-    // pause when hero off-screen to save battery
-    new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) { if (!raf) draw(); }
-        else { cancelAnimationFrame(raf); raf = null; }
-      });
-    }, { threshold: 0 }).observe(canvas);
-  }
+  /* ---------- hero background ----------
+     Moved to assets/js/hero-bg.js — a "living backend system"
+     data-flow visualization (nodes, mesh, streaming packets,
+     query ripples, parallax). Remove that script tag to revert. */
 
   /* ---------- copy to clipboard ---------- */
   const copyButtons = $$("[data-copy]");

@@ -200,7 +200,12 @@ body::before {
 
 /* ---------- hero ---------- */
 .hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: 120px 24px 80px; max-width: var(--maxw); margin: 0 auto; }
-.hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.hero__canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1;
+  /* keep the field faint behind the headline (left), fuller on the right */
+  -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.42) 34%, #000 72%);
+          mask-image: linear-gradient(90deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.42) 34%, #000 72%);
+}
 .hero__inner { width: 100%; max-width: 900px; }
 .hero__eyebrow {
   display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 0.82rem;
