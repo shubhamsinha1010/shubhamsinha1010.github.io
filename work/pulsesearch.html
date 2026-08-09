@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>PulseSearch — Real-time CDC search + RAG · Case study · Shubham Sinha</title>
-  <meta name="description" content="Case study: PulseSearch, a real-time AI-native search system — change data capture from MySQL via Debezium + Kafka into Elasticsearch, hybrid BM25 + kNN search with Reciprocal Rank Fusion, and grounded RAG on a local LLM, running entirely on Docker Compose." />
+  <meta name="description" content="Case study: PulseSearch, a real-time AI-native search system — change data capture from MySQL via Debezium + Kafka into Elasticsearch, hybrid BM25 + kNN search with Reciprocal Rank Fusion, and grounded RAG via Groq's free-tier LLM, running on Docker Compose." />
   <meta name="author" content="Shubham Sinha" />
   <meta name="theme-color" content="#0a0a0b" />
   <link rel="canonical" href="https://shubhamsinha1010.github.io/work/pulsesearch.html" />
 
   <meta property="og:type" content="article" />
   <meta property="og:title" content="PulseSearch — Real-time CDC search + RAG · Case study" />
-  <meta property="og:description" content="Change data capture into Elasticsearch, hybrid BM25 + vector search with RRF, and grounded RAG on a local LLM — fully local on Docker Compose." />
+  <meta property="og:description" content="Change data capture into Elasticsearch, hybrid BM25 + vector search with RRF, and grounded RAG via Groq — CDC pipeline on Docker Compose." />
   <meta property="og:image" content="https://shubhamsinha1010.github.io/assets/img/og-card.png" />
   <meta property="og:url" content="https://shubhamsinha1010.github.io/work/pulsesearch.html" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -31,10 +31,10 @@
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "headline": "PulseSearch — real-time CDC search and grounded RAG",
-    "description": "A real-time AI-native search system: change data capture from MySQL via Debezium + Kafka into Elasticsearch, hybrid BM25 + kNN search with Reciprocal Rank Fusion, and grounded RAG on a local LLM, running entirely on Docker Compose.",
+    "description": "A real-time AI-native search system: change data capture from MySQL via Debezium + Kafka into Elasticsearch, hybrid BM25 + kNN search with Reciprocal Rank Fusion, and grounded RAG via Groq's free-tier LLM, with the CDC pipeline running on Docker Compose.",
     "author": { "@type": "Person", "name": "Shubham Sinha", "url": "https://shubhamsinha1010.github.io/" },
     "mainEntityOfPage": "https://shubhamsinha1010.github.io/work/pulsesearch.html",
-    "about": ["Change Data Capture", "Debezium", "Kafka", "Elasticsearch", "Hybrid Search", "Reciprocal Rank Fusion", "Retrieval-Augmented Generation", "FastAPI"]
+    "about": ["Change Data Capture", "Debezium", "Kafka", "Elasticsearch", "Hybrid Search", "Reciprocal Rank Fusion", "Retrieval-Augmented Generation", "Groq", "FastAPI"]
   }
   </script>
   <script type="application/ld+json">
@@ -74,8 +74,8 @@
       <p class="case__summary">
         An AI-native search system over a live data firehose: change data capture streams every
         write from MySQL into Elasticsearch, served as hybrid keyword + vector search and a grounded
-        RAG assistant on a local LLM — the entire stack runs on one <code>docker compose up</code>,
-        zero cloud, zero API keys.
+        RAG assistant via <strong>Groq</strong> (free tier) — the CDC pipeline runs on one
+        <code>docker compose up</code>, with embeddings local and no paid cloud services.
       </p>
     </div>
 
@@ -90,7 +90,7 @@
       </div>
       <div class="case__meta-item">
         <span class="case__meta-label">Stack</span>
-        <span class="case__meta-value">FastAPI · Debezium · Kafka · Elasticsearch · Ollama</span>
+        <span class="case__meta-value">FastAPI · Debezium · Kafka · Elasticsearch · Groq</span>
       </div>
     </div>
 
@@ -130,9 +130,9 @@
         continuous rather than a seeded demo.
       </p>
       <ul>
-        <li><strong>CDC, not polling</strong> — Debezium tails the MySQL binlog and publishes ordered change events to Kafka (Redpanda); a worker embeds each change and upserts it into Elasticsearch.</li>
-        <li><strong>Hybrid retrieval with RRF</strong> — BM25 and dense-vector kNN result lists are fused in application code with Reciprocal Rank Fusion, keeping it free of paid Elastic tiers and making ranking explicit and tunable.</li>
-        <li><strong>Grounded RAG</strong> — a local LLM (Ollama) answers strictly from retrieved context, cites sources with timestamps, reports the freshest source, and refuses when retrieval is empty.</li>
+        <li><strong>CDC, not polling</strong> — Debezium tails the MySQL binlog and publishes ordered change events to Kafka (Redpanda); a worker embeds each change and upserts it into Elasticsearch. Wikipedia summary enrichment runs <strong>async after indexing</strong>, so it doesn't inflate commit→searchable latency.</li>
+        <li><strong>Hybrid retrieval with RRF</strong> — BM25 and dense-vector kNN result lists are fused in application code with Reciprocal Rank Fusion, keeping it free of paid Elastic tiers and making ranking explicit and tunable. A labeled live eval script keeps relevance measurable.</li>
+        <li><strong>Grounded RAG</strong> — Groq's free-tier LLM (<code>llama-3.1-8b-instant</code>) answers strictly from retrieved context, cites sources with timestamps, reports the freshest source, and refuses when retrieval is empty — with an extractive fallback if the API is unavailable.</li>
         <li><strong>Observable by design</strong> — end-to-end "commit → searchable" latency, throughput, and DLQ rate are Prometheus metrics surfaced as p50/p95/p99 in Grafana.</li>
       </ul>
     </section>
@@ -140,7 +140,7 @@
     <section class="case__section reveal">
       <h2>Architecture</h2>
       <div class="case__diagram">
-        <svg viewBox="0 0 900 372" role="img" aria-label="PulseSearch architecture: a firehose is written to MySQL, captured by Debezium into Kafka, embedded and upserted into Elasticsearch by a worker; Kafka also drives a live WebSocket dashboard, and a FastAPI service serves hybrid search and RAG over Elasticsearch using a local LLM.">
+        <svg viewBox="0 0 900 372" role="img" aria-label="PulseSearch architecture: a firehose is written to MySQL, captured by Debezium into Kafka, embedded and upserted into Elasticsearch by a worker; Kafka also drives a live WebSocket dashboard, and a FastAPI service serves hybrid search and RAG over Elasticsearch using Groq.">
           <defs>
             <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
               <path d="M0 0L10 5L0 10z" fill="#c7f94b"/>
@@ -206,8 +206,8 @@
           <text class="dg-sub" x="792" y="217" text-anchor="middle">hybrid search + RAG</text>
 
           <rect class="dg-box" x="740" y="290" width="145" height="48" rx="10"/>
-          <text class="dg-label" x="812" y="311" text-anchor="middle">Ollama</text>
-          <text class="dg-sub" x="812" y="327" text-anchor="middle">local LLM</text>
+          <text class="dg-label" x="812" y="311" text-anchor="middle">Groq</text>
+          <text class="dg-sub" x="812" y="327" text-anchor="middle">free-tier LLM</text>
 
           <path class="dg-flow" d="M792 180 L820 96"/>
           <text class="dg-flow-label" x="800" y="150">search</text>
@@ -239,7 +239,7 @@
         <figcaption>
           <strong>Product UI</strong> — Hybrid (RRF) search returns hits with per-result BM25 and kNN
           rank provenance (here: 10 hits in ~264&nbsp;ms). The right rail is the live CDC-backed change
-          stream; Elasticsearch, the live stream, and the local LLM all show healthy.
+          stream; Elasticsearch, the live stream, and the RAG LLM all show healthy.
         </figcaption>
       </figure>
 
@@ -297,11 +297,18 @@
         (<code>k = 60</code>). Every hit exposes its BM25 and kNN ranks, making relevance transparent and
         tunable rather than a black box.
       </p>
+      <h3>Keeping the CDC path fast</h3>
+      <p>
+        Wikipedia page summaries are useful for search and RAG, but fetching them on the critical path
+        inflated sync latency. Enrichment now runs <strong>after</strong> the document is searchable,
+        so commit→index stays lean while summaries still land asynchronously.
+      </p>
       <h3>Grounding the assistant</h3>
       <p>
         The RAG endpoint answers only from retrieved context, cites sources with timestamps, reports the
-        freshest source, and returns <code>grounded: false</code> when retrieval is empty — with an
-        extractive fallback if the LLM is unavailable, so it's always demonstrable.
+        freshest source, and returns <code>grounded: false</code> when retrieval is empty. Generation uses
+        <strong>Groq</strong> (<code>llama-3.1-8b-instant</code>, free tier) behind an <code>LLMClient</code>
+        protocol — with an extractive fallback if the API is unavailable, so the endpoint stays demonstrable.
       </p>
     </section>
 
@@ -331,7 +338,7 @@
         </div>
         <div class="case__result">
           <span class="case__result-num">$0</span>
-          <span class="case__result-label">fully local on Docker Compose — no cloud, no API keys</span>
+          <span class="case__result-label">Docker Compose CDC stack + Groq free-tier RAG — no paid cloud</span>
         </div>
       </div>
     </section>
@@ -339,7 +346,7 @@
     <section class="case__section reveal">
       <h2>Stack</h2>
       <div class="case__stack">
-        <span>FastAPI</span><span>Debezium</span><span>Kafka / Redpanda</span><span>MySQL</span><span>Elasticsearch</span><span>sentence-transformers</span><span>Ollama</span><span>Next.js</span><span>Prometheus</span><span>Grafana</span><span>Docker</span>
+        <span>FastAPI</span><span>Debezium</span><span>Kafka / Redpanda</span><span>MySQL</span><span>Elasticsearch</span><span>sentence-transformers</span><span>Groq</span><span>Next.js</span><span>Prometheus</span><span>Grafana</span><span>Docker</span>
       </div>
     </section>
 

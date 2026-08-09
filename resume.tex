@@ -1,0 +1,194 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\usepackage[top=0.3in,bottom=0.3in,left=0.5in,right=0.5in]{geometry}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% pdfTeX: unicode + real interword spaces so ATS does not glue \hfill gaps
+\ifdefined\pdfgentounicode
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\fi
+\ifdefined\pdfinterwordspaceon
+  \pdfinterwordspaceon
+\fi
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+% Stacked lines + \hfill (not tabular*) so ATS keeps spaces between left/right fields
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \textbf{#1} \hfill #2 \\
+    \textit{\small#3} \hfill \textit{\small#4}
+  \vspace{-6pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \textit{\small#1} \hfill \textit{\small#2}
+  \vspace{-6pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+      \textbf{\small#1} \hfill #2
+    \vspace{-4pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge \scshape Shubham Sinha} \\ \vspace{1pt}
+    \small
+    \href{tel:+918905169414}{\underline{+91 8905169414}} $|$
+    \href{mailto:sinhashubham1911@gmail.com}{\underline{sinhashubham1911@gmail.com}} $|$
+    \href{https://shubhamsinha1010.github.io/}{\underline{shubhamsinha1010.github.io}} \\ \vspace{1pt}
+    \href{https://www.linkedin.com/in/shubham010/}{\underline{LinkedIn}} $|$
+    \href{https://github.com/shubhamsinha1010}{\underline{GitHub}} $|$
+    \href{https://leetcode.com/u/sinhashubham1911/}{\underline{LeetCode}}
+\end{center}
+
+%-----------SUMMARY-----------
+\section{\textbf{Summary}}
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small{\item{
+    Python backend \& AI engineer with 5+ years building search infrastructure, CDC pipelines, and real-time data platforms. Optimized billion-row BI systems on AWS and shipped production NLP and RAG --- from catalog classification to grounded retrieval.
+  }}
+\end{itemize}
+
+%-----------WORK EXPERIENCE-----------
+\section{\textbf{Work Experience}}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Numerator}{Jan 2024 -- Present}
+      {Engineer 1}{Remote, India}
+      \resumeItemListStart
+        \resumeItem{Optimized BI query paths on a \textbf{billion-row} MySQL store with data associates, cutting heavy analytical reads from minutes to seconds and raising throughput by \textbf{50\%}.}
+        \resumeItem{Engineered a layered \textbf{Django REST Framework} service over \textbf{Elasticsearch}, splitting business APIs, search, and ingestion; reduced median API latency by \textbf{150ms}.}
+        \resumeItem{Implemented MySQL-to-Elasticsearch \textbf{CDC} with pub-sub and \textbf{Celery}, replacing overnight reindexes with sync under \textbf{60} seconds.}
+        \resumeItem{Automated EC2, RDS, S3, and Lambda provisioning with \textbf{Terraform}, cutting environment setup from hours to minutes.}
+        \resumeItem{Fine-tuned \textbf{Hugging Face} models with \textbf{spaCy} preprocessing for US, CA, and DE catalogs, improving brand/category attribution by \textbf{23\%}.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Inexture Solutions LLP}{Dec 2020 -- Dec 2023}
+      {Python Developer}{Ahmedabad, Gujarat, India}
+      \resumeItemListStart
+        \resumeItem{Delivered \textbf{UPI} deposit workflows for a crypto platform serving over \textbf{19M} registered users, enabling in-app wallet funding without card rails.}
+        \resumeItem{Launched \textbf{Grafana}/\textbf{ELK} payment dashboards with on-call teams, cutting \textbf{MTTR} by \textbf{40\%} through earlier anomaly detection.}
+        \resumeItem{Engineered \textbf{RabbitMQ} producers and consumers that decoupled synchronous paths across microservices on a national employment platform.}
+        \resumeItem{Streamlined multi-stage builds and deployments with \textbf{Jenkins CI/CD}, removing most manual release steps.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------TECHNICAL SKILLS-----------
+\section{\textbf{Skills}}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Python, SQL, Go, TypeScript} \\
+     \textbf{Backend \& Data}{: Django, Django REST Framework, FastAPI, MySQL, PostgreSQL, Elasticsearch, Celery, RabbitMQ, Kafka, Debezium, WebSockets, SQLAlchemy} \\
+     \textbf{Cloud \& Delivery}{: AWS, Terraform, Docker, Jenkins, GitHub Actions, Grafana, Prometheus, ELK} \\
+     \textbf{AI / NLP}{: Hugging Face Transformers, spaCy, RAG}
+    }}
+ \end{itemize}
+
+%-----------PROJECTS-----------
+% Featured portfolio projects. Work CDC / catalog attribution already covered under experience.
+\section{\textbf{Projects}}
+    \resumeSubHeadingListStart
+
+      \resumeProjectHeading
+          {\textbf{PulseSearch} $|$ \emph{Python, FastAPI, Debezium, Kafka, Elasticsearch, RAG}}{}
+          \resumeItemListStart
+            \resumeItem{Built a real-time AI-native search stack: MySQL \textbf{CDC} via \textbf{Debezium} + \textbf{Kafka} into \textbf{Elasticsearch}, with hybrid BM25 + kNN fused by Reciprocal Rank Fusion.}
+            \resumeItem{Shipped grounded \textbf{RAG} via Groq free-tier LLM with citations, freshness guarantees, and extractive fallback; effectively-once indexing via version-guarded upserts, replayable backfill, and DLQ isolation.}
+          \resumeItemListEnd
+
+      \resumeProjectHeading
+          {\textbf{CricLot} $|$ \emph{Python, FastAPI, Next.js, WebSockets, SQLAlchemy}}{}
+          \resumeItemListStart
+            \resumeItem{Built a server-authoritative live cricket auction engine with a lot state machine; host, team, and display consoles stay in sync over a \textbf{WebSocket} hub.}
+            \resumeItem{Validated bids against purse, increment, and squad cap before persist/broadcast so concurrent bids cannot corrupt auction state.}
+          \resumeItemListEnd
+
+    \resumeSubHeadingListEnd
+
+%-----------EDUCATION-----------
+\section{\textbf{Education}}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Dharmsinh Desai University}{Nadiad, Gujarat, India}
+      {Bachelor of Technology in Information Technology (IT)}{Aug 2017 -- May 2021}
+  \resumeSubHeadingListEnd
+
+%-------------------------------------------
+\end{document}
