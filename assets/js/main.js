@@ -151,11 +151,18 @@
   $$(".reveal").forEach((el) => revObserver.observe(el));
 
   /* ---------- animated counters ---------- */
-  /* Final values live in the HTML so crawlers / LLMs / no-JS see 50%, <60s, 19M+ —
-     not the animation seed "0". JS only rewrites the text when animating. */
+  /* Final values ship in HTML (and data-final / aria-label) so crawlers see
+     50% / 60 / 19M+ even when JS runs. We only count-up after a real user
+     scroll/pointer gesture — headless full-page scrapers that never interact
+     keep the final numbers instead of catching a mid-animation "0". */
   const animateCount = (el) => {
     const target = parseFloat(el.dataset.count);
     const suffix = el.dataset.suffix || "";
+    const finalText = el.dataset.final || (target + suffix);
+    if (!Number.isFinite(target) || navigator.webdriver) {
+      el.textContent = finalText;
+      return;
+    }
     const dur = 1400;
     const start = performance.now();
     el.textContent = "0" + suffix;
@@ -164,17 +171,40 @@
       const eased = 1 - Math.pow(1 - t, 3);
       el.textContent = Math.floor(eased * target) + suffix;
       if (t < 1) requestAnimationFrame(step);
-      else el.textContent = target + suffix;
+      else el.textContent = finalText;
     };
     requestAnimationFrame(step);
   };
-  if (!prefersReduced) {
-    const countObserver = new IntersectionObserver((entries, obs) => {
+  if (!prefersReduced && !navigator.webdriver) {
+    let countsArmed = false;
+    const pending = new Set($$("[data-count]"));
+    const armCounts = () => { countsArmed = true; flushCounts(); };
+    const flushCounts = () => {
+      if (!countsArmed) return;
+      pending.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        const visible = rect.top < vh * 0.85 && rect.bottom > vh * 0.15;
+        if (visible) {
+          animateCount(el);
+          pending.delete(el);
+          countObserver.unobserve(el);
+        }
+      });
+    };
+    const countObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) { animateCount(entry.target); obs.unobserve(entry.target); }
+        if (!entry.isIntersecting) return;
+        if (!countsArmed) return; // keep final HTML values until user interacts
+        animateCount(entry.target);
+        pending.delete(entry.target);
+        countObserver.unobserve(entry.target);
       });
     }, { threshold: 0.6 });
-    $$("[data-count]").forEach((el) => countObserver.observe(el));
+    pending.forEach((el) => countObserver.observe(el));
+    window.addEventListener("scroll", armCounts, { once: true, passive: true });
+    window.addEventListener("pointerdown", armCounts, { once: true });
+    window.addEventListener("keydown", armCounts, { once: true });
   }
 
   /* ---------- pipeline sequence (featured project motifs) ---------- */
