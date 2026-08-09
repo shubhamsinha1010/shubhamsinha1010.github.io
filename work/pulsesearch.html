@@ -327,18 +327,19 @@
 
     <section class="case__section reveal">
       <h2>Outcome</h2>
+      <p class="case__lead">Measured on a local Docker/Colima laptop demo (~38k Wikipedia change docs) — not cloud prod. BM25-only search is much cheaper (p50 ~27&nbsp;ms); hybrid cost is mostly query embedding.</p>
       <div class="case__results">
         <div class="case__result">
-          <span class="case__result-num">Sub-sec</span>
-          <span class="case__result-label">median commit → searchable latency, tracked in Grafana</span>
+          <span class="case__result-num">1.1s / 2.0s</span>
+          <span class="case__result-label">CDC → Elasticsearch p50 / p95</span>
         </div>
         <div class="case__result">
-          <span class="case__result-num">Hybrid</span>
-          <span class="case__result-label">BM25 + kNN fused with RRF, with per-hit rank provenance</span>
+          <span class="case__result-num">310 ms</span>
+          <span class="case__result-label">hybrid search p50 (warm); p95 1.6&nbsp;s</span>
         </div>
         <div class="case__result">
-          <span class="case__result-num">$0</span>
-          <span class="case__result-label">Docker Compose CDC stack + Groq free-tier RAG — no paid cloud</span>
+          <span class="case__result-num">~5/s</span>
+          <span class="case__result-label">index throughput (peak ~6/s); RAG ~0.8–1.0&nbsp;s; DLQ ~0</span>
         </div>
       </div>
     </section>
