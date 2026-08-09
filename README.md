@@ -60,4 +60,4 @@ python3 -m http.server 8080
 ## Updating content
 Everything a recruiter sees lives in `index.html`. Edit the text/links there; styling is in `assets/css/style.css`. To swap the photo, replace `assets/img/shubham.png` (keep the name or update the `<img src>`).
 
-To add a downloadable resume: drop `resume.pdf` in `assets/` and link it from the nav or contact section.
+To add a downloadable resume: drop `Shubham_Resume.pdf` in `assets/` and link it from the nav or contact section.
