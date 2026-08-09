@@ -221,6 +221,62 @@
     </section>
 
     <section class="case__section reveal">
+      <h2>In action</h2>
+      <p>
+        Screenshots from a live local run — the product UI recruiters can relate to, plus the Grafana
+        panels that make the pipeline's SLOs and failure modes observable rather than asserted.
+      </p>
+
+      <figure class="case__shot">
+        <img
+          src="../assets/img/work/pulsesearch-ui.png"
+          alt="PulseSearch UI: hybrid RRF search for Science with BM25 and kNN ranks per hit, plus a live Wikimedia change stream and 18,627 indexed documents"
+          width="1024"
+          height="472"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>
+          <strong>Product UI</strong> — Hybrid (RRF) search returns hits with per-result BM25 and kNN
+          rank provenance (here: 10 hits in ~264&nbsp;ms). The right rail is the live CDC-backed change
+          stream; Elasticsearch, the live stream, and the local LLM all show healthy.
+        </figcaption>
+      </figure>
+
+      <figure class="case__shot">
+        <img
+          src="../assets/img/work/pulsesearch-grafana-slo.png"
+          alt="Grafana PulseSearch Pipeline dashboard showing end-to-end sync latency p95, docs indexed per second, active WebSocket clients, sync latency percentiles, and ingest versus index throughput"
+          width="1024"
+          height="475"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>
+          <strong>Pipeline SLOs</strong> — End-to-end commit→searchable latency (p50 / p95 / p99),
+          ingest vs index throughput, and active WebSocket clients. Spikes during backfill or burst
+          traffic are visible instead of hidden behind averages.
+        </figcaption>
+      </figure>
+
+      <figure class="case__shot">
+        <img
+          src="../assets/img/work/pulsesearch-grafana-ops.png"
+          alt="Grafana panels for CDC events by operation type, search latency p95 by BM25 hybrid and vector modes, dead-letter queue rate at zero, and embedding latency p95"
+          width="1024"
+          height="476"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>
+          <strong>Ops detail</strong> — CDC volume broken out by create / read / update; search p95
+          by mode (BM25 vs vector vs hybrid); embedding p95; and a flat DLQ rate — poison messages
+          stay isolated without wedging the consumer.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="case__section reveal">
       <h2>The hard parts</h2>
       <h3>Effectively-once indexing on at-least-once delivery</h3>
       <p>
