@@ -156,7 +156,7 @@
     \small{\item{
      \textbf{Languages}{: Python, SQL, Go, TypeScript} \\
      \textbf{Backend \& Data}{: Django, Django REST Framework, FastAPI, MySQL, PostgreSQL, Elasticsearch, Celery, RabbitMQ, Kafka, Debezium, WebSockets, SQLAlchemy} \\
-     \textbf{Cloud \& Delivery}{: AWS, Terraform, Docker, Jenkins, GitHub Actions, Grafana, Prometheus, ELK} \\
+     \textbf{Cloud \& Delivery}{: AWS, Terraform, Docker, Kubernetes, Jenkins, GitHub Actions, Grafana, Prometheus, ELK} \\
      \textbf{AI / NLP}{: Hugging Face Transformers, spaCy, RAG}
     }}
  \end{itemize}
@@ -167,10 +167,11 @@
     \resumeSubHeadingListStart
 
       \resumeProjectHeading
-          {\textbf{PulseSearch} $|$ \emph{Python, FastAPI, Debezium, Kafka, Elasticsearch, RAG}}{}
+          {\textbf{PulseSearch} $|$ \emph{Python, FastAPI, Debezium, Kafka, Elasticsearch, Kubernetes, RAG}}{}
           \resumeItemListStart
             \resumeItem{Built a real-time AI-native search stack: MySQL \textbf{CDC} via \textbf{Debezium} + \textbf{Kafka} into \textbf{Elasticsearch}, with hybrid BM25 + kNN fused by Reciprocal Rank Fusion.}
-            \resumeItem{Shipped grounded \textbf{RAG} via Groq free-tier LLM with citations, freshness guarantees, and extractive fallback; effectively-once indexing via version-guarded upserts, replayable backfill, and DLQ isolation.}
+            \resumeItem{Shipped grounded \textbf{RAG} via Groq free-tier LLM with citations and extractive fallback; effectively-once indexing via version-guarded upserts, replayable backfill, and DLQ isolation.}
+            \resumeItem{Added a \textbf{Kubernetes} app tier (probes, Ingress, ServiceAccount) and \textbf{GitHub Actions} CI/CD (Ruff, Bandit, ES smoke, kubeconform) publishing images to \textbf{GHCR}.}
           \resumeItemListEnd
 
       \resumeProjectHeading

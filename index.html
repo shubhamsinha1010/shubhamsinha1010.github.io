@@ -339,16 +339,16 @@
           <p class="project__desc">
             A real-time, AI-native search system over a live data firehose. Change data capture
             streams every row change from MySQL through Debezium + Kafka into Elasticsearch, served
-            as hybrid BM25 + vector search and a grounded RAG assistant (Groq free-tier LLM) — the
-            pipeline runs on Docker Compose with Prometheus/Grafana SLOs.
+            as hybrid BM25 + vector search and a grounded RAG assistant (Groq). Compose for the full
+            demo; Kubernetes for the app tier; GitHub Actions → GHCR for CI/CD.
           </p>
           <ul class="project__highlights">
             <li>Effectively-once indexing on at-least-once delivery via version-guarded upserts, replayable backfill &amp; dead-letter isolation</li>
             <li>Hybrid retrieval: BM25 + kNN fused with Reciprocal Rank Fusion, with per-hit rank provenance</li>
-            <li>Grounded RAG with citations + extractive fallback; async enrichment kept off the CDC critical path for lower sync latency</li>
+            <li>K8s Deployments with probes + Ingress; CI with Ruff, Bandit, ES smoke, and image publish to GHCR on main</li>
           </ul>
           <div class="project__tags">
-            <span>FastAPI</span><span>Kafka</span><span>Debezium</span><span>Elasticsearch</span><span>Groq</span><span>RAG</span><span>Next.js</span><span>Docker</span>
+            <span>FastAPI</span><span>Kafka</span><span>Debezium</span><span>Elasticsearch</span><span>Groq</span><span>RAG</span><span>Kubernetes</span><span>GitHub Actions</span>
           </div>
           <div class="project__links">
             <a href="work/pulsesearch.html" class="project__link" data-magnetic>
@@ -518,7 +518,7 @@
         <div class="skill-group reveal">
           <h3 class="skill-group__title">Cloud &amp; Delivery</h3>
           <div class="skill-group__chips">
-            <span>AWS</span><span>Terraform</span><span>Docker</span><span>Jenkins</span><span>GitHub Actions</span><span>Grafana</span><span>ELK</span>
+            <span>AWS</span><span>Terraform</span><span>Docker</span><span>Kubernetes</span><span>Jenkins</span><span>GitHub Actions</span><span>Grafana</span><span>ELK</span>
           </div>
         </div>
         <div class="skill-group reveal">
