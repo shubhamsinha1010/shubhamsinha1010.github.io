@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Incident Commander — SRE multi-agent copilot · Case study · Shubham Sinha</title>
+  <meta name="description" content="Case study: Incident Commander — a production-grade SRE multi-agent copilot on LangGraph 1.0 with parallel specialist agents, human-in-the-loop approval, durable Postgres checkpoints, SSE streaming, and PagerDuty/Datadog webhooks." />
+  <meta name="author" content="Shubham Sinha" />
+  <meta name="theme-color" content="#0a0a0b" />
+  <link rel="canonical" href="https://shubhamsinha1010.github.io/work/incident-commander.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Incident Commander — SRE multi-agent copilot · Case study" />
+  <meta property="og:description" content="LangGraph supervisor + parallel investigation subgraph, HITL interrupt/resume, Postgres checkpoints, SSE streaming, and webhook intake." />
+  <meta property="og:image" content="https://shubhamsinha1010.github.io/assets/img/og-card.png" />
+  <meta property="og:url" content="https://shubhamsinha1010.github.io/work/incident-commander.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://shubhamsinha1010.github.io/assets/img/og-card.png" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+  <link rel="preload" href="../assets/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="../assets/css/fonts.css" />
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/case.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Incident Commander — an SRE multi-agent copilot on LangGraph",
+    "description": "A production-grade SRE multi-agent copilot: parallel specialist agents, planner diagnosis, human-in-the-loop approval before destructive actions, durable Postgres checkpoints, SSE streaming, and PagerDuty/Datadog webhook intake.",
+    "author": { "@type": "Person", "name": "Shubham Sinha", "url": "https://shubhamsinha1010.github.io/" },
+    "mainEntityOfPage": "https://shubhamsinha1010.github.io/work/incident-commander.html",
+    "about": ["LangGraph", "LangChain", "Multi-agent systems", "Human-in-the-loop", "SRE", "FastAPI", "Server-Sent Events", "Postgres checkpointing", "LangSmith"]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://shubhamsinha1010.github.io/" },
+      { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://shubhamsinha1010.github.io/#work" },
+      { "@type": "ListItem", "position": 3, "name": "Incident Commander", "item": "https://shubhamsinha1010.github.io/work/incident-commander.html" }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a href="#case" class="skip-link">Skip to content</a>
+  <div class="cursor-dot" data-cursor-dot></div>
+  <div class="cursor-ring" data-cursor-ring></div>
+  <div class="scroll-progress" data-scroll-progress></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="case-nav">
+    <a href="../index.html#work" class="case-nav__back" data-magnetic>
+      <svg viewBox="0 0 24 24" width="18" height="18"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to work
+    </a>
+    <div class="case-nav__actions">
+      <a href="../assets/Shubham_Resume.pdf" target="_blank" rel="noopener" class="nav__resume" data-magnetic>Resume</a>
+      <a href="../index.html#contact" class="nav__cta" data-magnetic>Let's talk</a>
+    </div>
+  </header>
+
+  <main class="case" id="case">
+    <div class="reveal">
+      <span class="case__eyebrow">Case study · Personal project</span>
+      <h1 class="case__title">Incident Commander —<br/>SRE multi-agent copilot</h1>
+      <p class="case__summary">
+        A production alert comes in. Four specialist agents investigate in parallel, a planner
+        drafts a diagnosis and ranked actions, and the graph <strong>pauses</strong> before any
+        destructive step — then resumes from a durable checkpoint once an engineer approves.
+        Built on <strong>LangGraph 1.0</strong> end to end.
+      </p>
+    </div>
+
+    <div class="case__meta reveal">
+      <div class="case__meta-item">
+        <span class="case__meta-label">Role</span>
+        <span class="case__meta-value">Solo — design &amp; build</span>
+      </div>
+      <div class="case__meta-item">
+        <span class="case__meta-label">Type</span>
+        <span class="case__meta-value">Multi-agent SRE copilot</span>
+      </div>
+      <div class="case__meta-item">
+        <span class="case__meta-label">Stack</span>
+        <span class="case__meta-value">LangGraph · FastAPI · Postgres · SSE</span>
+      </div>
+    </div>
+
+    <div class="case__links reveal">
+      <a href="https://github.com/shubhamsinha1010/Incident-Commander" target="_blank" rel="noopener" class="btn btn--primary" data-magnetic>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+        <span>View source</span>
+      </a>
+      <a href="https://deepwiki.com/shubhamsinha1010/Incident-Commander" target="_blank" rel="noopener" class="btn btn--ghost" data-magnetic><span>Architecture wiki</span></a>
+    </div>
+
+    <section class="case__section reveal">
+      <h2>The problem</h2>
+      <p class="case__lead">
+        On-call is a race against incomplete signal — and autonomous agents that can roll back
+        production without a human gate are not a feature, they're a liability.
+      </p>
+      <p>
+        When a critical alert fires, an engineer has to gather logs, metrics, recent deploys and
+        runbooks under time pressure. A naive "one LLM call" assistant either hallucinates a
+        diagnosis or, worse, is given tools that can mutate production with no durable pause.
+        The interesting systems problem is not "call an LLM" — it's
+        <strong>orchestrating specialists, merging parallel findings, and interrupting before
+        destructive work</strong> in a way that survives restarts and can be audited.
+      </p>
+      <p>
+        I wanted a graph that demonstrates the production LangGraph surface — subgraphs, custom
+        reducers, HITL interrupt/resume, thread-scoped checkpoints, streaming — as one coherent
+        incident workflow rather than a toy chat loop.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>The approach</h2>
+      <p>
+        Incident Commander is a <strong>supervisor + worker</strong> multi-agent system. An alert
+        enters via the FastAPI API (or a PagerDuty / Datadog webhook). The supervisor routes into
+        a parallel investigation subgraph, a planner synthesises a diagnosis and ranked actions,
+        and any destructive top action forces a human-in-the-loop gate before the executor runs.
+      </p>
+      <ul>
+        <li><strong>Parallel investigation</strong> — log, metrics, change and runbook analysts fan out as a LangGraph subgraph; findings merge through a custom reducer so concurrent writes stay safe.</li>
+        <li><strong>Planner, then gate</strong> — the planner produces diagnosis, confidence and ranked actions; if the top action is destructive (rollback / restart), the graph hits <code>interrupt_before</code> on <code>human_approval</code> and waits indefinitely.</li>
+        <li><strong>Resume, don't replay</strong> — <code>PATCH /approve</code> (or edit-plan) calls <code>update_state</code> with the approved action, then reinvokes; the checkpointer restores exactly where the graph stopped.</li>
+        <li><strong>Two entry modes</strong> — interactive clients get SSE (<code>astream</code>) for live node progress; webhooks use background <code>ainvoke</code> because no browser is listening.</li>
+        <li><strong>Swappable backends</strong> — logs / metrics / changes / runbooks / rollback sit behind ABCs with deterministic fakes for tests; swap to Datadog, Prometheus, ArgoCD or kubectl without touching agent code.</li>
+      </ul>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Architecture</h2>
+      <div class="case__diagram">
+        <svg viewBox="0 0 900 420" role="img" aria-label="Incident Commander architecture: alerts enter via API or webhooks into a LangGraph supervisor that fans out to parallel specialist agents, plans, pauses for human approval, then executes and resolves with Postgres checkpoints and LangSmith tracing.">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#c7f94b"/>
+            </marker>
+            <marker id="arrowdim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0 0L10 5L0 10z" fill="#8a8a95"/>
+            </marker>
+          </defs>
+
+          <!-- intake -->
+          <rect class="dg-box" x="20" y="28" width="130" height="54" rx="10"/>
+          <text class="dg-label" x="85" y="52" text-anchor="middle">Alert intake</text>
+          <text class="dg-sub" x="85" y="69" text-anchor="middle">API · PD · Datadog</text>
+
+          <rect class="dg-box" x="180" y="28" width="130" height="54" rx="10"/>
+          <text class="dg-label" x="245" y="52" text-anchor="middle">FastAPI</text>
+          <text class="dg-sub" x="245" y="69" text-anchor="middle">SSE + approve</text>
+
+          <rect class="dg-box dg-box--accent" x="340" y="28" width="150" height="54" rx="10"/>
+          <text class="dg-label" x="415" y="52" text-anchor="middle">Supervisor</text>
+          <text class="dg-sub" x="415" y="69" text-anchor="middle">LangGraph router</text>
+
+          <!-- investigation fan-out -->
+          <rect class="dg-box" x="120" y="140" width="105" height="48" rx="10"/>
+          <text class="dg-label" x="172" y="161" text-anchor="middle">Logs</text>
+          <text class="dg-sub" x="172" y="177" text-anchor="middle">analyst</text>
+
+          <rect class="dg-box" x="245" y="140" width="105" height="48" rx="10"/>
+          <text class="dg-label" x="297" y="161" text-anchor="middle">Metrics</text>
+          <text class="dg-sub" x="297" y="177" text-anchor="middle">analyst</text>
+
+          <rect class="dg-box" x="370" y="140" width="105" height="48" rx="10"/>
+          <text class="dg-label" x="422" y="161" text-anchor="middle">Changes</text>
+          <text class="dg-sub" x="422" y="177" text-anchor="middle">analyst</text>
+
+          <rect class="dg-box" x="495" y="140" width="105" height="48" rx="10"/>
+          <text class="dg-label" x="547" y="161" text-anchor="middle">Runbooks</text>
+          <text class="dg-sub" x="547" y="177" text-anchor="middle">retriever</text>
+
+          <!-- plan + hitl + execute -->
+          <rect class="dg-box" x="200" y="250" width="120" height="48" rx="10"/>
+          <text class="dg-label" x="260" y="271" text-anchor="middle">Planner</text>
+          <text class="dg-sub" x="260" y="287" text-anchor="middle">diagnosis</text>
+
+          <rect class="dg-box dg-box--accent" x="360" y="250" width="140" height="48" rx="10"/>
+          <text class="dg-label" x="430" y="271" text-anchor="middle">HITL gate</text>
+          <text class="dg-sub" x="430" y="287" text-anchor="middle">interrupt_before</text>
+
+          <rect class="dg-box" x="540" y="250" width="120" height="48" rx="10"/>
+          <text class="dg-label" x="600" y="271" text-anchor="middle">Executor</text>
+          <text class="dg-sub" x="600" y="287" text-anchor="middle">rollback tool</text>
+
+          <rect class="dg-box" x="700" y="250" width="120" height="48" rx="10"/>
+          <text class="dg-label" x="760" y="271" text-anchor="middle">Resolve</text>
+          <text class="dg-sub" x="760" y="287" text-anchor="middle">or escalate</text>
+
+          <!-- infra -->
+          <rect class="dg-box" x="200" y="350" width="200" height="48" rx="10"/>
+          <text class="dg-label" x="300" y="371" text-anchor="middle">Checkpointer</text>
+          <text class="dg-sub" x="300" y="387" text-anchor="middle">Memory · Postgres</text>
+
+          <rect class="dg-box" x="440" y="350" width="200" height="48" rx="10"/>
+          <text class="dg-label" x="540" y="371" text-anchor="middle">LangSmith</text>
+          <text class="dg-sub" x="540" y="387" text-anchor="middle">trace URL per run</text>
+
+          <!-- flows -->
+          <path class="dg-flow" d="M150 55 L178 55"/>
+          <path class="dg-flow" d="M310 55 L338 55"/>
+          <path class="dg-flow" d="M415 82 L172 138"/>
+          <path class="dg-flow" d="M415 82 L297 138"/>
+          <path class="dg-flow" d="M415 82 L422 138"/>
+          <path class="dg-flow" d="M415 82 L547 138"/>
+          <text class="dg-flow-label" x="520" y="118">fan-out</text>
+
+          <path class="dg-flow" d="M172 188 L240 248"/>
+          <path class="dg-flow" d="M297 188 L260 248"/>
+          <path class="dg-flow" d="M422 188 L280 248"/>
+          <path class="dg-flow" d="M547 188 L300 248"/>
+          <text class="dg-flow-label" x="150" y="230">merge</text>
+
+          <path class="dg-flow" d="M320 274 L358 274"/>
+          <path class="dg-flow" d="M500 274 L538 274"/>
+          <path class="dg-flow" d="M660 274 L698 274"/>
+          <text class="dg-flow-label" x="448" y="242">approve</text>
+
+          <path class="dg-flow--dim" d="M430 298 L300 348"/>
+          <path class="dg-flow--dim" d="M430 298 L540 348"/>
+          <text class="dg-flow-label" x="348" y="330">persist</text>
+        </svg>
+        <p class="case__diagram-cap">Alert in → parallel specialists → plan → human gate → execute; checkpoints and traces outlive the process.</p>
+      </div>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Key decisions</h2>
+      <h3>Interrupt before mutate, not after</h3>
+      <p>
+        Destructive tools (rollback, restart) never run until an engineer approves. The graph
+        compiles with <code>interrupt_before=["human_approval"]</code>, serialises full state to
+        the checkpointer, and returns control to the API. That is the difference between a demo
+        chatbot and something you could put near production tooling.
+      </p>
+      <h3>Custom reducers for parallel fan-out</h3>
+      <p>
+        Four analysts write findings concurrently. A TypedDict state with an explicit merge
+        reducer keeps the fan-out parallel-safe instead of last-write-wins — the same pattern
+        production LangGraph graphs need when subgraphs emit into shared lists.
+      </p>
+      <h3>Checkpoints that survive restarts</h3>
+      <p>
+        Dev uses <code>MemorySaver</code>; prod swaps to
+        <code>AsyncPostgresSaver</code> behind the same factory. Every invoke is scoped by
+        <code>thread_id</code>, so an approve call after a process bounce still resumes the
+        right incident — conversations don't evaporate with the container.
+      </p>
+      <h3>Streaming for humans, invoke for machines</h3>
+      <p>
+        The UI and interactive API stream node events over SSE so an on-call engineer can watch
+        investigation progress. Webhook intake (PagerDuty / Datadog) fires
+        <code>ainvoke</code> in a background task — no hanging SSE client required.
+      </p>
+      <h3>Dependency inversion on every backend</h3>
+      <p>
+        Agents bind LangChain tools that call ABCs, not Datadog SDKs. Deterministic fake adapters
+        make unit and HITL integration tests fast and hermetic; swapping to real infra is a
+        change in the service locator, not a rewrite of prompts or graph edges.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Engineering</h2>
+      <p>
+        The codebase is layered for the same reasons as the graph: a shared kernel for config,
+        typed exceptions and structlog; agent nodes that share prompt loading and JSON parsing;
+        graphs that only compose nodes and edges; and a FastAPI surface for CRUD, approve,
+        edit-plan, SSE stream, and webhook intake. Unit suites cover supervisor routing, planner
+        / executor behaviour (mocked LLM), and fake adapters; integration tests exercise full
+        graph routing including interrupt → <code>update_state</code> → resume. Pre-commit runs
+        Ruff; Docker Compose brings up the API with Postgres checkpointing for the durability path.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Outcome</h2>
+      <div class="case__results">
+        <div class="case__result">
+          <span class="case__result-num">4</span>
+          <span class="case__result-label">specialist agents investigating in parallel</span>
+        </div>
+        <div class="case__result">
+          <span class="case__result-num">HITL</span>
+          <span class="case__result-label">interrupt before every destructive action</span>
+        </div>
+        <div class="case__result">
+          <span class="case__result-num">0</span>
+          <span class="case__result-label">work repeated on approve — resume from checkpoint</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Stack</h2>
+      <div class="case__stack">
+        <span>LangGraph 1.0</span><span>LangChain</span><span>FastAPI</span><span>SSE</span><span>Postgres checkpoints</span><span>LangSmith</span><span>Pydantic</span><span>structlog</span><span>Docker Compose</span><span>pytest</span><span>Ruff</span>
+      </div>
+    </section>
+
+    <div class="case__cta reveal">
+      <p>Want the deep dive?</p>
+      <a href="https://deepwiki.com/shubhamsinha1010/Incident-Commander" target="_blank" rel="noopener" class="btn btn--primary" data-magnetic><span>Read the architecture wiki</span></a>
+      <a href="../index.html#work" class="btn btn--ghost" data-magnetic><span>Back to all work</span></a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>© <span data-year>2026</span> Shubham Sinha</span>
+    <a href="../index.html#top" class="footer__top" data-magnetic>Back to portfolio ↑</a>
+  </footer>
+
+  <script src="../assets/js/main.js" defer></script>
+</body>
+</html>

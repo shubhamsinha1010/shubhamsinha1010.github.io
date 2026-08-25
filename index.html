@@ -7,7 +7,7 @@
   <meta name="description" content="Shubham Sinha — Python Backend &amp; AI Engineer. 5+ years building fast APIs, search infrastructure and real-time data pipelines, plus ML features like classification and RAG with Python, FastAPI, Elasticsearch and Hugging Face." />
   <meta name="author" content="Shubham Sinha" />
   <meta name="theme-color" content="#0a0a0b" />
-  <meta name="keywords" content="Shubham Sinha, Python Backend Engineer, AI Engineer, Machine Learning, RAG, LLM, Hugging Face, FastAPI, Django, Elasticsearch, AWS" />
+  <meta name="keywords" content="Shubham Sinha, Python Backend Engineer, AI Engineer, Machine Learning, LangGraph, LangChain, RAG, LLM, Hugging Face, FastAPI, Django, Elasticsearch, AWS" />
   <link rel="canonical" href="https://shubhamsinha1010.github.io/" />
 
   <!-- Open Graph / social -->
@@ -49,7 +49,7 @@
         "addressCountry": "IN"
       }
     },
-    "knowsAbout": ["Python", "FastAPI", "Django", "Elasticsearch", "Kafka", "Change Data Capture", "Hugging Face", "Retrieval-Augmented Generation", "Machine Learning", "AWS"],
+    "knowsAbout": ["Python", "FastAPI", "Django", "Elasticsearch", "Kafka", "Change Data Capture", "LangGraph", "LangChain", "Hugging Face", "Retrieval-Augmented Generation", "Machine Learning", "AWS"],
     "description": "Python backend & AI engineer. Highlighted outcomes: 50% higher analytical throughput on billion-row BI paths; MySQL→search sync under 60s via CDC; UPI payments for a platform serving 19M+ users; 5+ years experience.",
     "sameAs": [
       "https://github.com/shubhamsinha1010",
@@ -330,6 +330,51 @@
         <h2 class="section__title">Selected Work</h2>
       </div>
 
+      <!-- Featured: Incident Commander -->
+      <article class="project project--featured reveal" data-tilt>
+        <div class="project__glow"></div>
+        <div class="project__content">
+          <span class="project__label">Featured project</span>
+          <h3 class="project__title">Incident Commander</h3>
+          <p class="project__desc">
+            An SRE multi-agent copilot on LangGraph 1.0. A production alert fans out to
+            specialist agents (logs, metrics, changes, runbooks), a planner synthesises a
+            diagnosis, and the graph <em>interrupts</em> before any destructive action —
+            then resumes from a durable checkpoint after human approval.
+          </p>
+          <ul class="project__highlights">
+            <li>Parallel investigation subgraph with custom reducers for safe fan-out merge</li>
+            <li>Human-in-the-loop via interrupt-before + update-state resume — no work repeated</li>
+            <li>MemorySaver in dev, Postgres checkpointer in prod; SSE streaming + PagerDuty/Datadog webhooks</li>
+          </ul>
+          <div class="project__tags">
+            <span>LangGraph</span><span>LangChain</span><span>FastAPI</span><span>SSE</span><span>Postgres</span><span>HITL</span><span>LangSmith</span>
+          </div>
+          <div class="project__links">
+            <a href="work/incident-commander.html" class="project__link" data-magnetic>
+              Read case study
+              <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="https://github.com/shubhamsinha1010/Incident-Commander" target="_blank" rel="noopener" class="project__link project__link--ghost" data-magnetic>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z"/></svg>
+              View source
+            </a>
+            <a href="https://deepwiki.com/shubhamsinha1010/Incident-Commander" target="_blank" rel="noopener" class="project__link project__link--ghost" data-magnetic>Architecture wiki</a>
+          </div>
+        </div>
+        <div class="project__visual">
+          <div class="pipeline" data-pipeline>
+            <div class="pipeline__node" data-node><span>Alert</span></div>
+            <div class="pipeline__node" data-node><span>Agents</span></div>
+            <div class="pipeline__node" data-node><span>HITL</span></div>
+            <div class="pipeline__node" data-node><span>Execute</span></div>
+            <svg class="pipeline__wires" viewBox="0 0 100 200" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M50 20 V50" class="wire"/><path d="M50 70 V100" class="wire"/><path d="M50 120 V150" class="wire"/>
+            </svg>
+          </div>
+        </div>
+      </article>
+
       <!-- Featured: PulseSearch -->
       <article class="project project--featured reveal" data-tilt>
         <div class="project__glow"></div>
@@ -523,7 +568,7 @@
         </div>
         <div class="skill-group reveal">
           <h3 class="skill-group__title">AI / NLP</h3>
-          <div class="skill-group__chips"><span>Hugging Face</span><span>spaCy</span><span>Transformers</span></div>
+          <div class="skill-group__chips"><span>LangGraph</span><span>LangChain</span><span>Hugging Face</span><span>spaCy</span><span>Transformers</span><span>RAG</span></div>
         </div>
       </div>
     </section>
