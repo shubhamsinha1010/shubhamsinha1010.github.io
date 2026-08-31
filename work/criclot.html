@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>CricLot — Real-time auction engine · Case study · Shubham Sinha</title>
-  <meta name="description" content="Case study: CricLot, a server-authoritative live cricket auction platform with a WebSocket hub keeping host, team and display screens in sync — FastAPI, Next.js, WebSockets, SQLAlchemy." />
+  <meta name="description" content="Case study: CricLot, a server-authoritative live cricket auction platform with a WebSocket hub keeping host, team and display screens in sync — bid fan-out in ~5ms p50 across 50 sockets, an end-to-end suite in CI, and a Fly/Railway + Vercel deploy path." />
   <meta name="author" content="Shubham Sinha" />
   <meta name="theme-color" content="#0a0a0b" />
   <link rel="canonical" href="https://shubhamsinha1010.github.io/work/criclot.html" />
@@ -31,10 +31,10 @@
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "headline": "CricLot — a real-time auction engine",
-    "description": "A server-authoritative live cricket auction platform with a WebSocket hub keeping host, team and display screens in sync.",
+    "description": "A server-authoritative live cricket auction platform with a WebSocket hub keeping host, team and display screens in sync, verified by an end-to-end suite in CI and deployable to Fly/Railway + Vercel.",
     "author": { "@type": "Person", "name": "Shubham Sinha", "url": "https://shubhamsinha1010.github.io/" },
     "mainEntityOfPage": "https://shubhamsinha1010.github.io/work/criclot.html",
-    "about": ["WebSockets", "Real-time systems", "FastAPI", "Next.js", "State machines"]
+    "about": ["WebSockets", "Real-time systems", "FastAPI", "Next.js", "State machines", "Concurrency", "End-to-end testing", "Load testing", "GitHub Actions"]
   }
   </script>
   <script type="application/ld+json">
@@ -74,7 +74,8 @@
       <p class="case__summary">
         Host IPL-style private cricket auctions with team budgets, live bidding, and
         separate host / team / display consoles — every screen driven by one
-        server-authoritative source of truth over WebSockets.
+        server-authoritative source of truth over WebSockets, with the concurrency
+        rules covered by an end-to-end suite in CI and a one-command deploy path.
       </p>
     </div>
 
@@ -89,7 +90,7 @@
       </div>
       <div class="case__meta-item">
         <span class="case__meta-label">Stack</span>
-        <span class="case__meta-value">FastAPI · Next.js · WebSockets · SQLAlchemy</span>
+        <span class="case__meta-value">FastAPI · Next.js · WebSockets · Docker · CI</span>
       </div>
     </div>
 
@@ -219,22 +220,60 @@
         slice of it. That kept the protocol small and made adding a new kind of screen a
         front-end-only change.
       </p>
+      <h3>Roles resolved on the server, not the client</h3>
+      <p>
+        The seat endpoint resolves <strong>host, team or display</strong> from a JWT or an access
+        key, so a read-only board can join a room without an identity while host-only controls
+        return <code>403</code> for a team key. Authorization is a server concern; the front end
+        just hides what it was never allowed to call.
+      </p>
+      <h3>Scaling out would break correctness — so it doesn't</h3>
+      <p>
+        The timer runtime and the WebSocket hub are <strong>in-process</strong>. A second worker
+        would fork a live auction into two conflicting truths, so the deploy configs deliberately
+        pin one instance and one worker. Horizontal scale here needs shared timer state and a
+        broker-backed hub first — that's a real trade-off, documented rather than hidden behind an
+        autoscaler.
+      </p>
+      <h3>Deterministic shutdown beats a passing-most-of-the-time suite</h3>
+      <p>
+        Dropping an auction runtime used to cancel its timer tasks without awaiting them, so a
+        timer caught mid-query was still unwinding as the event loop closed — deadlocking the
+        end-to-end suite about half the time during teardown. Awaiting cancellation, disposing the
+        test engine while its loop is alive, and reading test WebSocket frames through a
+        <strong>bounded queue</strong> means a missing broadcast now <em>fails</em> instead of hanging.
+      </p>
+    </section>
+
+    <section class="case__section reveal">
+      <h2>Delivery &amp; testing</h2>
+      <p>
+        A real-time system is only trustworthy if the concurrency rules are verified rather than
+        asserted, so the auction's hard edges are covered end to end:
+      </p>
+      <ul>
+        <li><strong>End-to-end suite</strong> — full host flow, multi-client WebSocket broadcast, hold-timer reset plus unattended auto-settle, purse / increment / squad-cap rules, and the host / team / display authorization matrix.</li>
+        <li><strong>WebSocket load script</strong> — 50 concurrent sockets stay connected and every one of them sees each bid within ~5&nbsp;ms p50 / 16&nbsp;ms p95 of the first subscriber.</li>
+        <li><strong>CI on every push and PR</strong> — the suite runs on GitHub Actions, so timer and broadcast regressions surface before merge.</li>
+        <li><strong>Hostable, not just runnable</strong> — Dockerfile plus Fly / Railway configs for the API and Vercel for the front end, or LAN / Cloudflare Tunnel for a living-room auction; an architecture doc and a 2-minute demo script ship alongside.</li>
+      </ul>
     </section>
 
     <section class="case__section reveal">
       <h2>Outcome</h2>
+      <p class="case__lead">Measured with the bundled load script against a single instance — the topology the deploy configs actually pin.</p>
       <div class="case__results">
         <div class="case__result">
-          <span class="case__result-num">1</span>
-          <span class="case__result-label">authoritative source of truth for timer, lots &amp; purses</span>
+          <span class="case__result-num">~5 ms / 16 ms</span>
+          <span class="case__result-label">bid fan-out p50 / p95 across 50 sockets</span>
         </div>
         <div class="case__result">
           <span class="case__result-num">3</span>
-          <span class="case__result-label">screen types kept in sync from one state stream</span>
+          <span class="case__result-label">roles authorized server-side from one state stream</span>
         </div>
         <div class="case__result">
           <span class="case__result-num">0</span>
-          <span class="case__result-label">refreshes needed — live updates over WebSockets</span>
+          <span class="case__result-label">refreshes needed — and 0 floats, money is integer Lakhs</span>
         </div>
       </div>
     </section>
@@ -242,7 +281,7 @@
     <section class="case__section reveal">
       <h2>Stack</h2>
       <div class="case__stack">
-        <span>FastAPI</span><span>Next.js</span><span>WebSockets</span><span>SQLAlchemy</span><span>TypeScript</span>
+        <span>FastAPI</span><span>Next.js 15</span><span>WebSockets</span><span>SQLAlchemy</span><span>TypeScript</span><span>JWT</span><span>SQLite / Postgres</span><span>Docker</span><span>Fly / Railway</span><span>Vercel</span><span>GitHub Actions</span><span>pytest</span>
       </div>
     </section>
 

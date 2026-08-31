@@ -435,10 +435,11 @@
           <ul class="project__highlights">
             <li>Server-authoritative auction engine + lot state machine (hold timer resets on bid)</li>
             <li>Concurrency-safe bidding: validates purse, increment &amp; squad cap; persists every bid</li>
-            <li>Multi-screen UX (host / team / display) with WebSocket fan-out</li>
+            <li>Bid fan-out to 50 sockets in ~5 ms p50 / 16 ms p95, verified by an E2E suite in CI</li>
+            <li>Server-side host / team / display roles; deployable to Fly / Railway + Vercel</li>
           </ul>
           <div class="project__tags">
-            <span>FastAPI</span><span>Next.js</span><span>WebSockets</span><span>SQLAlchemy</span><span>TypeScript</span>
+            <span>FastAPI</span><span>Next.js 15</span><span>WebSockets</span><span>SQLAlchemy</span><span>TypeScript</span><span>Docker</span><span>GitHub Actions</span>
           </div>
           <div class="project__links">
             <a href="work/criclot.html" class="project__link" data-magnetic>
