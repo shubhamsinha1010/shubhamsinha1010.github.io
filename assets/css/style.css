@@ -329,6 +329,26 @@ body::before {
 }
 .stat__label { font-size: clamp(0.75rem, 2vw, 0.82rem); color: var(--text-dim); }
 
+/* ---------- intro video ---------- */
+.intro {
+  margin: 0 0 clamp(36px, 5vw, 72px);
+  scroll-margin-top: 96px;
+}
+.intro__player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #000;
+  object-fit: contain;
+}
+.intro__caption {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
 /* ---------- timeline ---------- */
 .timeline { position: relative; display: flex; flex-direction: column; gap: 20px; }
 .timeline__item {
