@@ -1,0 +1,11 @@
+---
+// A project's pipeline as a stream: nodes on one line, one packet in transit.
+interface Props { nodes: string[]; live?: boolean; large?: boolean }
+const { nodes, live = false, large = false } = Astro.props;
+---
+<div class:list={['pipe', { 'pipe--large': large }]} data-pipe={live ? 'live' : ''} aria-hidden="true">
+  <span class="pipe__rail"><span class="pipe__packet" data-packet></span></span>
+  <ol class="pipe__nodes">
+    {nodes.map((n, i) => <li class="pipe__node"><span class="pipe__i">{String(i).padStart(2, '0')}</span><span class="pipe__n" data-pipe-node>{n}</span></li>)}
+  </ol>
+</div>

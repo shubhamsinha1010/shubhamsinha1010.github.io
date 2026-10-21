@@ -1,0 +1,49 @@
+---
+import { nav, site } from '../data/site';
+const gmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${site.email}`;
+const year = new Date().getFullYear();
+---
+<footer id="contact" class="fin">
+  <div class="fin__cta">
+    <div class="wrap fin__cta-inner">
+      <h2 class="fin__title" data-split="lines">Let's build something <span class="hl hl--dark">together</span></h2>
+      <p class="fin__kicker">{site.status}. Email is the quickest way to reach me. I usually reply within a day.</p>
+      <div class="fin__actions">
+        <a class="btn btn--dark" href={`mailto:${site.email}`}>Email me</a>
+        <a class="btn btn--line" href={gmail} target="_blank" rel="noopener">Open in Gmail<span class="sr-only"> (opens in a new tab)</span></a>
+        <button type="button" class="btn btn--line fin__copy" data-copy={site.email}>
+          <span data-copy-state aria-live="polite">Copy email address</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="fin__base">
+    <div class="wrap fin__cols">
+      <div class="fin__col">
+        <h3 class="fin__h">Contact</h3>
+        <ul>
+          <li><a class="util" href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li><button type="button" class="util" data-copy={site.phone.raw}><span data-copy-state aria-live="polite">{site.phone.display}</span></button></li>
+          <li><span class="fin__muted">{site.location}</span></li>
+        </ul>
+      </div>
+      <div class="fin__col">
+        <h3 class="fin__h">Elsewhere</h3>
+        <ul>
+          {site.socials.map((s) => <li><a class="util" href={s.href} target="_blank" rel="noopener">{s.label}<span class="sr-only"> (opens in a new tab)</span></a></li>)}
+        </ul>
+      </div>
+      <div class="fin__col">
+        <h3 class="fin__h">On this site</h3>
+        <ul>
+          {nav.filter((n) => n.label !== 'Contact').map((n) => <li><a class="util" href={n.href}>{n.label}</a></li>)}
+          <li><a class="util" href={site.resume} target="_blank" rel="noopener">Resume (PDF)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap fin__bar">
+      <p>© {year} {site.name}</p>
+      <a class="util" href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { caseProjects } from '../data/site';
+---
+<Base title="Page not found" description="This page doesn't exist. My work, experience and contact details are one click away.">
+  <section class="nf">
+    <div class="wrap nf__inner">
+      <p class="hero__kicker">Error 404</p>
+      <h1 class="nf__title" data-split="lines" data-intro>This page is <span class="hl">missing</span></h1>
+      <p class="nf__lead">There's nothing at <code data-nf-path>/this-page</code>. The page may have moved when I rebuilt the site, or the link might have a typo.</p>
+      <div class="hero__cta">
+        <a class="btn btn--dark" href="/">Go to the home page</a>
+        <a class="btn btn--line" href="/#work">See my work</a>
+      </div>
+      <p class="nf__suggest">Or jump straight to a case study:</p>
+      <ul class="nf__list">
+        {caseProjects.map((p) => <li><a class="tag tag--link" href={p.href}>{p.title}</a></li>)}
+      </ul>
+    </div>
+  </section>
+</Base>

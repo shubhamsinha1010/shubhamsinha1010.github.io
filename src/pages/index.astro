@@ -1,0 +1,138 @@
+---
+import Base from '../layouts/Base.astro';
+import Pipeline from '../components/Pipeline.astro';
+import { about, education, facts, jobs, projects, site, stackStrip, statement } from '../data/site';
+---
+<Base home>
+  <section class="hero" data-hero aria-labelledby="hero-title">
+    <div class="hero__inner wrap">
+      <div class="hero__copy">
+        <p class="hero__kicker" data-reveal="fade" data-intro>{site.role}</p>
+        <h1 class="hero__title" id="hero-title" data-split="lines" data-intro>
+          Hi, I'm Shubham. I build <span class="hl">search</span> and data pipelines that keep&nbsp;up.
+        </h1>
+        <p class="hero__lead" data-reveal="fade" data-intro data-delay="0.35">
+          I've spent five years building Python backends, search and live data pipelines. These days I add AI features on top. I work at Numerator.
+        </p>
+        <div class="hero__cta" data-reveal="fade" data-intro data-delay="0.5">
+          <a class="btn btn--dark" href="#work">See my work</a>
+          <a class="btn btn--line" href={site.resume} target="_blank" rel="noopener">Resume<span class="sr-only"> (PDF, opens in a new tab)</span></a>
+        </div>
+        <p class="hero__status" data-reveal="fade" data-intro data-delay="0.6"><span class="dot" aria-hidden="true"></span>{site.status} · {site.location}</p>
+      </div>
+      <svg class="hero__art" viewBox="0 0 600 640" aria-hidden="true" focusable="false">
+        <path class="hero__loop" d="M20 660 C110 590 160 520 185 454 A200 200 0 1 1 415 454" />
+        <path class="hero__beads" d="M20 660 C110 590 160 520 185 454 A200 200 0 1 1 415 454" />
+        <circle class="hero__node" cx="415" cy="454" r="34" />
+      </svg>
+    </div>
+  </section>
+
+  <div class="strip" aria-label="Tools I work with">
+    <ul class="strip__track">
+      {[0, 1].map((copy) => stackStrip.map((s) => <li aria-hidden={copy ? 'true' : undefined}>{s}</li>))}
+    </ul>
+  </div>
+
+  <section class="impact" aria-labelledby="impact-title">
+    <span class="blob blob--a" aria-hidden="true"></span>
+    <span class="blob blob--b" aria-hidden="true"></span>
+    <div class="wrap impact__inner">
+      <h2 class="h-sec" id="impact-title" data-split="lines">I love making slow systems fast</h2>
+      <p class="sec-lead" data-reveal="fade">{statement.text}</p>
+      <ul class="stats">
+        {facts.map((f, i) => (
+          <li class="stat" data-reveal="up" data-delay={String(i * 0.06)}>
+            <span class="stat__num">{f.num}</span>
+            <span class="stat__label">{f.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="work-title">
+    <div class="wrap">
+      <h2 class="h-sec" id="work-title" data-split="lines">Selected work</h2>
+      <p class="sec-lead" data-reveal="fade">Three personal projects, two systems from my day job, and two smaller experiments.</p>
+      <ul class="cards">
+        {projects.map((p, i) => (
+          <li class:list={['card-wrap', { 'card-wrap--feature': i < 2 }]} data-reveal="up">
+            <a class="card" href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})}>
+              <span class="card__kind">{p.kind}</span>
+              <span class="card__title">{p.title}{p.external && <span class="sr-only"> (GitHub, opens in a new tab)</span>}</span>
+              <span class="card__line">{p.oneLine}</span>
+              {i < 2 && <Pipeline nodes={p.pipeline} live />}
+              <span class="card__tags">{p.stackShort.map((s) => <span class="tag">{s}</span>)}</span>
+              <span class="card__go">{p.external ? 'View on GitHub' : 'Read the case study'} <span aria-hidden="true">{p.external ? '↗' : '→'}</span></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="more"><a class="link" href="https://github.com/shubhamsinha1010?tab=repositories" target="_blank" rel="noopener">See every repository on GitHub</a></p>
+    </div>
+  </section>
+
+  <section class="exp" id="experience" aria-labelledby="exp-title">
+    <div class="wrap">
+      <div class="panel">
+        <h2 class="h-sec h-sec--left" id="exp-title" data-split="lines">Where I've <span class="pink">worked</span></h2>
+        <div class="jobs">
+          {jobs.map((j) => (
+            <article class="job" data-reveal="up">
+              <header class="job__head">
+                <h3 class="job__company">{j.company}</h3>
+                <p class="job__role">{j.role}</p>
+                <p class="job__when">{j.dates} · {j.place}</p>
+              </header>
+              <ul class="job__list">
+                {j.records.map((r) => <li set:html={r} />)}
+              </ul>
+              <p class="job__stack">{j.stack.map((s) => <span class="tag tag--cream">{s}</span>)}</p>
+            </article>
+          ))}
+        </div>
+        <div class="edu" data-reveal="up">
+          <h3 class="edu__h">Education</h3>
+          <p><strong>{education.degree}</strong>, {education.school}, {education.place}. {education.dates}.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about" aria-labelledby="about-title">
+    <div class="wrap">
+      <h2 class="h-sec" id="about-title" data-split="lines">A bit about me</h2>
+      <div class="about__grid">
+        <figure class="about__video" data-reveal="up">
+          <video controls playsinline preload="none" data-poster="/assets/video/intro.jpg" width="1920" height="1080">
+            <source src="/assets/video/intro.mp4" type="video/mp4" />
+          </video>
+          <button type="button" class="film__play" data-film-play>
+            <span class="film__play-inner"><span class="film__play-icon" aria-hidden="true">▶</span>Play the intro, 1:30</span>
+          </button>
+          <figcaption class="nametag">
+            <strong>Shubham Sinha</strong>
+            <span>Python backend &amp; AI engineer</span>
+            <span>A 90-second intro, in my own words</span>
+          </figcaption>
+        </figure>
+        <div class="about__text" data-reveal="up" data-delay="0.1">
+          <picture class="about__portrait">
+            <source srcset="/assets/img/shubham.webp" type="image/webp" />
+            <img src="/assets/img/shubham.png" alt="Portrait of Shubham Sinha" width="400" height="400" loading="lazy" decoding="async" />
+          </picture>
+          {about.bio.map((b) => <p set:html={b} />)}
+        </div>
+      </div>
+      <div class="skills">
+        <h3 class="skills__h">Skills and tools</h3>
+        <dl class="skills__grid">
+          {about.skills.map((s) => (
+            <div class="skill" data-reveal="up"><dt>{s.key}</dt><dd>{s.value.split(', ').map((v) => <span class="tag">{v}</span>)}</dd></div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+</Base>

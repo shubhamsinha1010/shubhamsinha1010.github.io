@@ -1,0 +1,115 @@
+---
+interface Props { slug: string }
+const { slug } = Astro.props;
+---
+<div class="dg-scroll" tabindex="0" role="region" aria-label="Architecture diagram, scrolls sideways on small screens">
+{slug === 'incident-commander' && (
+  <svg class="dg" viewBox="0 0 900 420" role="img" aria-label="Incident Commander architecture: alerts enter via API or webhooks into a LangGraph supervisor that fans out to parallel specialist agents, plans, pauses for human approval, then executes and resolves, with Postgres checkpoints and LangSmith tracing.">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0L10 5L0 10z" /></marker>
+    </defs>
+    <rect class="dg-box" x="20" y="28" width="130" height="54" /><text class="dg-label" x="85" y="52" text-anchor="middle">Alert intake</text><text class="dg-sub" x="85" y="69" text-anchor="middle">API · PD · Datadog</text>
+    <rect class="dg-box" x="180" y="28" width="130" height="54" /><text class="dg-label" x="245" y="52" text-anchor="middle">FastAPI</text><text class="dg-sub" x="245" y="69" text-anchor="middle">SSE + approve</text>
+    <rect class="dg-box dg-box--accent" x="340" y="28" width="150" height="54" /><text class="dg-label dg-label--inv" x="415" y="52" text-anchor="middle">Supervisor</text><text class="dg-sub dg-sub--inv" x="415" y="69" text-anchor="middle">LangGraph router</text>
+    <rect class="dg-box" x="120" y="140" width="105" height="48" /><text class="dg-label" x="172" y="161" text-anchor="middle">Logs</text><text class="dg-sub" x="172" y="177" text-anchor="middle">analyst</text>
+    <rect class="dg-box" x="245" y="140" width="105" height="48" /><text class="dg-label" x="297" y="161" text-anchor="middle">Metrics</text><text class="dg-sub" x="297" y="177" text-anchor="middle">analyst</text>
+    <rect class="dg-box" x="370" y="140" width="105" height="48" /><text class="dg-label" x="422" y="161" text-anchor="middle">Changes</text><text class="dg-sub" x="422" y="177" text-anchor="middle">analyst</text>
+    <rect class="dg-box" x="495" y="140" width="105" height="48" /><text class="dg-label" x="547" y="161" text-anchor="middle">Runbooks</text><text class="dg-sub" x="547" y="177" text-anchor="middle">retriever</text>
+    <rect class="dg-box" x="200" y="250" width="120" height="48" /><text class="dg-label" x="260" y="271" text-anchor="middle">Planner</text><text class="dg-sub" x="260" y="287" text-anchor="middle">diagnosis</text>
+    <rect class="dg-box dg-box--accent" x="360" y="250" width="140" height="48" /><text class="dg-label dg-label--inv" x="430" y="271" text-anchor="middle">HITL gate</text><text class="dg-sub dg-sub--inv" x="430" y="287" text-anchor="middle">interrupt_before</text>
+    <rect class="dg-box" x="540" y="250" width="120" height="48" /><text class="dg-label" x="600" y="271" text-anchor="middle">Executor</text><text class="dg-sub" x="600" y="287" text-anchor="middle">rollback tool</text>
+    <rect class="dg-box" x="700" y="250" width="120" height="48" /><text class="dg-label" x="760" y="271" text-anchor="middle">Resolve</text><text class="dg-sub" x="760" y="287" text-anchor="middle">or escalate</text>
+    <rect class="dg-box" x="200" y="350" width="200" height="48" /><text class="dg-label" x="300" y="371" text-anchor="middle">Checkpointer</text><text class="dg-sub" x="300" y="387" text-anchor="middle">Memory · Postgres</text>
+    <rect class="dg-box" x="440" y="350" width="200" height="48" /><text class="dg-label" x="540" y="371" text-anchor="middle">LangSmith</text><text class="dg-sub" x="540" y="387" text-anchor="middle">trace URL per run</text>
+    <path class="dg-flow" d="M150 55 L178 55" /><path class="dg-flow" d="M310 55 L338 55" />
+    <path class="dg-flow" d="M415 82 L172 138" /><path class="dg-flow" d="M415 82 L297 138" /><path class="dg-flow" d="M415 82 L422 138" /><path class="dg-flow" d="M415 82 L547 138" />
+    <text class="dg-flow-label" x="520" y="118">fan-out</text>
+    <path class="dg-flow" d="M172 188 L240 248" /><path class="dg-flow" d="M297 188 L260 248" /><path class="dg-flow" d="M422 188 L280 248" /><path class="dg-flow" d="M547 188 L300 248" />
+    <text class="dg-flow-label" x="150" y="230">merge</text>
+    <path class="dg-flow" d="M320 274 L358 274" /><path class="dg-flow" d="M500 274 L538 274" /><path class="dg-flow" d="M660 274 L698 274" />
+    <text class="dg-flow-label" x="448" y="242">approve</text>
+    <path class="dg-flow dg-flow--dim" d="M430 298 L300 348" /><path class="dg-flow dg-flow--dim" d="M430 298 L540 348" />
+    <text class="dg-flow-label" x="348" y="330">persist</text>
+  </svg>
+)}
+{slug === 'pulsesearch' && (
+  <svg class="dg" viewBox="0 0 900 372" role="img" aria-label="PulseSearch architecture: a live Wikipedia edit feed is written to MySQL, captured by Debezium into Kafka, embedded and upserted into Elasticsearch by a worker. Kafka also drives a live WebSocket dashboard, and a FastAPI service serves hybrid search and RAG over Elasticsearch using Groq.">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0L10 5L0 10z" /></marker>
+    </defs>
+    <rect class="dg-box" x="15" y="40" width="112" height="54" /><text class="dg-label" x="71" y="64" text-anchor="middle">Live feed</text><text class="dg-sub" x="71" y="81" text-anchor="middle">Wikimedia SSE</text>
+    <rect class="dg-box" x="140" y="40" width="112" height="54" /><text class="dg-label" x="196" y="64" text-anchor="middle">Ingest</text><text class="dg-sub" x="196" y="81" text-anchor="middle">producer</text>
+    <rect class="dg-box" x="265" y="40" width="112" height="54" /><text class="dg-label" x="321" y="64" text-anchor="middle">MySQL</text><text class="dg-sub" x="321" y="81" text-anchor="middle">record of truth</text>
+    <rect class="dg-box" x="390" y="40" width="112" height="54" /><text class="dg-label" x="446" y="64" text-anchor="middle">Debezium</text><text class="dg-sub" x="446" y="81" text-anchor="middle">binlog CDC</text>
+    <rect class="dg-box" x="515" y="40" width="112" height="54" /><text class="dg-label" x="571" y="64" text-anchor="middle">Kafka</text><text class="dg-sub" x="571" y="81" text-anchor="middle">Redpanda</text>
+    <rect class="dg-box dg-box--accent" x="640" y="40" width="112" height="54" /><text class="dg-label dg-label--inv" x="696" y="64" text-anchor="middle">Sync worker</text><text class="dg-sub dg-sub--inv" x="696" y="81" text-anchor="middle">embed + upsert</text>
+    <rect class="dg-box" x="765" y="40" width="120" height="54" /><text class="dg-label" x="825" y="64" text-anchor="middle">Elasticsearch</text><text class="dg-sub" x="825" y="81" text-anchor="middle">BM25 + kNN</text>
+    <path class="dg-flow" d="M127 67 L138 67" /><path class="dg-flow" d="M252 67 L263 67" /><path class="dg-flow" d="M377 67 L388 67" /><path class="dg-flow" d="M502 67 L513 67" /><path class="dg-flow" d="M627 67 L638 67" /><path class="dg-flow" d="M752 67 L763 67" />
+    <rect class="dg-box" x="515" y="180" width="112" height="48" /><text class="dg-label" x="571" y="201" text-anchor="middle">WS hub</text><text class="dg-sub" x="571" y="217" text-anchor="middle">fan-out</text>
+    <rect class="dg-box" x="515" y="290" width="112" height="48" /><text class="dg-label" x="571" y="311" text-anchor="middle">Dashboard</text><text class="dg-sub" x="571" y="327" text-anchor="middle">Next.js</text>
+    <path class="dg-flow dg-flow--dim" d="M571 94 L571 178" /><text class="dg-flow-label" x="578" y="140">live feed</text>
+    <path class="dg-flow dg-flow--dim" d="M571 228 L571 288" />
+    <rect class="dg-box" x="700" y="180" width="185" height="48" /><text class="dg-label" x="792" y="201" text-anchor="middle">FastAPI</text><text class="dg-sub" x="792" y="217" text-anchor="middle">hybrid search + RAG</text>
+    <rect class="dg-box" x="740" y="290" width="145" height="48" /><text class="dg-label" x="812" y="311" text-anchor="middle">Groq</text><text class="dg-sub" x="812" y="327" text-anchor="middle">free-tier LLM</text>
+    <path class="dg-flow" d="M792 180 L820 96" /><text class="dg-flow-label" x="800" y="150">search</text>
+    <path class="dg-flow" d="M792 228 L812 288" /><text class="dg-flow-label" x="818" y="262">generate</text>
+    <path class="dg-flow dg-flow--dim" d="M627 312 L698 216" /><text class="dg-flow-label" x="628" y="270">query</text>
+  </svg>
+)}
+{slug === 'criclot' && (
+  <svg class="dg" viewBox="0 0 760 384" role="img" aria-label="CricLot architecture: host, team and display clients connect through a WebSocket hub to a server-authoritative auction engine backed by a database.">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0L10 5L0 10z" /></marker>
+    </defs>
+    <rect class="dg-box" x="45" y="26" width="170" height="60" /><text class="dg-label" x="130" y="52" text-anchor="middle">Host console</text><text class="dg-sub" x="130" y="70" text-anchor="middle">controls the room</text>
+    <rect class="dg-box" x="295" y="26" width="170" height="60" /><text class="dg-label" x="380" y="52" text-anchor="middle">Team consoles</text><text class="dg-sub" x="380" y="70" text-anchor="middle">place bids</text>
+    <rect class="dg-box" x="545" y="26" width="170" height="60" /><text class="dg-label" x="630" y="52" text-anchor="middle">Display screen</text><text class="dg-sub" x="630" y="70" text-anchor="middle">big-screen view</text>
+    <rect class="dg-box" x="150" y="160" width="460" height="58" /><text class="dg-label" x="380" y="184" text-anchor="middle">WebSocket hub</text><text class="dg-sub" x="380" y="202" text-anchor="middle">connection registry · broadcast fan-out</text>
+    <rect class="dg-box dg-box--accent" x="150" y="292" width="230" height="66" /><text class="dg-label dg-label--inv" x="265" y="320" text-anchor="middle">Auction engine</text><text class="dg-sub dg-sub--inv" x="265" y="338" text-anchor="middle">state machine · source of truth</text>
+    <rect class="dg-box" x="430" y="292" width="180" height="66" /><text class="dg-label" x="520" y="320" text-anchor="middle">Database</text><text class="dg-sub" x="520" y="338" text-anchor="middle">bids · purses · squads</text>
+    <path class="dg-flow" d="M130 86 L210 158" /><text class="dg-flow-label" x="120" y="128">intents</text>
+    <path class="dg-flow" d="M300 218 L268 290" /><text class="dg-flow-label" x="196" y="258">validate</text>
+    <path class="dg-flow" d="M330 290 L360 220" /><text class="dg-flow-label" x="345" y="258">state</text>
+    <path class="dg-flow" d="M380 325 L428 325" /><text class="dg-flow-label" x="384" y="316">persist</text>
+    <path class="dg-flow dg-flow--dim" d="M360 160 L340 88" /><path class="dg-flow dg-flow--dim" d="M470 160 L600 88" /><text class="dg-flow-label" x="478" y="128">broadcast</text>
+  </svg>
+)}
+{slug === 'catalog-search' && (
+  <svg class="dg" viewBox="0 0 840 300" role="img" aria-label="Catalog search architecture: an ingest lane classifies products with spaCy and a Hugging Face model before indexing into Elasticsearch, while a query lane runs hybrid BM25 plus dense-vector retrieval to return ranked results.">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0L10 5L0 10z" /></marker>
+    </defs>
+    <text class="dg-sub" x="20" y="20">Ingest</text>
+    <rect class="dg-box" x="20" y="30" width="120" height="52" /><text class="dg-label" x="80" y="54" text-anchor="middle">New product</text><text class="dg-sub" x="80" y="70" text-anchor="middle">raw record</text>
+    <rect class="dg-box" x="170" y="30" width="120" height="52" /><text class="dg-label" x="230" y="54" text-anchor="middle">spaCy</text><text class="dg-sub" x="230" y="70" text-anchor="middle">preprocess</text>
+    <rect class="dg-box dg-box--accent" x="320" y="30" width="160" height="52" /><text class="dg-label dg-label--inv" x="400" y="54" text-anchor="middle">HF classifier</text><text class="dg-sub dg-sub--inv" x="400" y="70" text-anchor="middle">brand · category</text>
+    <text class="dg-sub" x="20" y="218">Query</text>
+    <rect class="dg-box" x="20" y="228" width="120" height="52" /><text class="dg-label" x="80" y="252" text-anchor="middle">User query</text><text class="dg-sub" x="80" y="268" text-anchor="middle">free text</text>
+    <rect class="dg-box" x="170" y="228" width="230" height="52" /><text class="dg-label" x="285" y="252" text-anchor="middle">Hybrid retrieval</text><text class="dg-sub" x="285" y="268" text-anchor="middle">BM25 + dense vectors</text>
+    <rect class="dg-box" x="520" y="124" width="150" height="56" /><text class="dg-label" x="595" y="148" text-anchor="middle">Elasticsearch</text><text class="dg-sub" x="595" y="166" text-anchor="middle">faceted index</text>
+    <rect class="dg-box" x="700" y="124" width="120" height="56" /><text class="dg-label" x="760" y="148" text-anchor="middle">Results</text><text class="dg-sub" x="760" y="166" text-anchor="middle">ranked</text>
+    <path class="dg-flow" d="M140 56 L166 56" /><path class="dg-flow" d="M290 56 L316 56" /><path class="dg-flow" d="M480 56 L522 122" /><text class="dg-flow-label" x="486" y="96">index + facets</text>
+    <path class="dg-flow" d="M140 254 L166 254" /><path class="dg-flow" d="M400 254 L522 182" /><text class="dg-flow-label" x="430" y="214">search</text>
+    <path class="dg-flow" d="M670 152 L696 152" />
+  </svg>
+)}
+{slug === 'cdc-search-sync' && (
+  <svg class="dg" viewBox="0 0 820 300" role="img" aria-label="CDC architecture: MySQL binlog captured by Debezium into Kafka topics, consumed by idempotent consumers that upsert into Elasticsearch, with a replayable backfill feeding Kafka.">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="dg-head" d="M0 0L10 5L0 10z" /></marker>
+    </defs>
+    <rect class="dg-box" x="20" y="30" width="120" height="58" /><text class="dg-label" x="80" y="56" text-anchor="middle">MySQL</text><text class="dg-sub" x="80" y="74" text-anchor="middle">source DB</text>
+    <rect class="dg-box" x="180" y="30" width="150" height="58" /><text class="dg-label" x="255" y="56" text-anchor="middle">Debezium</text><text class="dg-sub" x="255" y="74" text-anchor="middle">binlog connector</text>
+    <rect class="dg-box" x="380" y="30" width="120" height="58" /><text class="dg-label" x="440" y="56" text-anchor="middle">Kafka</text><text class="dg-sub" x="440" y="74" text-anchor="middle">topic per table</text>
+    <rect class="dg-box dg-box--accent" x="560" y="30" width="200" height="58" /><text class="dg-label dg-label--inv" x="660" y="52" text-anchor="middle">Consumers</text><text class="dg-sub dg-sub--inv" x="660" y="70" text-anchor="middle">idempotent · retries · DLQ</text>
+    <rect class="dg-box" x="560" y="206" width="200" height="60" /><text class="dg-label" x="660" y="232" text-anchor="middle">Elasticsearch</text><text class="dg-sub" x="660" y="250" text-anchor="middle">search index</text>
+    <rect class="dg-box" x="380" y="206" width="120" height="60" /><text class="dg-label" x="440" y="232" text-anchor="middle">Backfill</text><text class="dg-sub" x="440" y="250" text-anchor="middle">replayable job</text>
+    <path class="dg-flow" d="M140 59 L176 59" /><text class="dg-flow-label" x="138" y="24">binlog</text>
+    <path class="dg-flow" d="M330 59 L376 59" /><text class="dg-flow-label" x="330" y="24">events</text>
+    <path class="dg-flow" d="M500 59 L556 59" /><text class="dg-flow-label" x="500" y="24">consume</text>
+    <path class="dg-flow" d="M660 88 L660 204" /><text class="dg-flow-label" x="668" y="152">idempotent upsert</text>
+    <path class="dg-flow dg-flow--dim" d="M440 204 L440 90" /><text class="dg-flow-label" x="300" y="150">replay / backfill</text>
+  </svg>
+)}
+</div>
+<p class="dg-cue" aria-hidden="true">swipe sideways for the full graph <span>→</span></p>

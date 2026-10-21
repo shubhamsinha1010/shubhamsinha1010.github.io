@@ -1,0 +1,162 @@
+---
+import Base from '../../layouts/Base.astro';
+import Pipeline from '../../components/Pipeline.astro';
+import Diagram from '../../components/Diagram.astro';
+import { caseProjects, site, type Project } from '../../data/site';
+
+export function getStaticPaths() {
+  return caseProjects.map((p, i) => ({
+    params: { slug: p.slug },
+    props: { project: p, next: caseProjects[(i + 1) % caseProjects.length] },
+  }));
+}
+interface Props { project: Project; next: Project }
+const { project, next } = Astro.props;
+const c = project.case!;
+const url = `${site.url}/work/${project.slug}.html`;
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: c.metaTitle,
+    description: c.description,
+    author: { '@type': 'Person', name: site.name, url: `${site.url}/` },
+    mainEntityOfPage: url,
+    keywords: c.stack.join(', '),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${site.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Work', item: `${site.url}/#work` },
+      { '@type': 'ListItem', position: 3, name: project.title, item: url },
+    ],
+  },
+];
+const external = (h: string) => h.startsWith('http') || h.endsWith('.pdf');
+---
+<Base title={c.metaTitle} description={c.description} image={`/og-${project.slug}.png`} type="article" jsonLd={jsonLd}>
+  <article class="case">
+    <header class="case__hero">
+      <div class="wrap case__hero-inner">
+        <a class="btn btn--dark btn--sm case__back" href="/#work"><span aria-hidden="true">←</span> All work</a>
+        <p class="case__kind"><span class="tag tag--dark">{project.kind}</span></p>
+        <h1 class="case__title" data-split="lines" data-intro>{project.title}</h1>
+        <p class="case__summary" set:html={c.summary} />
+        <dl class="case__meta" data-reveal="fade" data-intro data-delay="0.4">
+          <div><dt>Role</dt><dd>{c.role}</dd></div>
+          <div><dt>{project.kind === 'Personal project' ? 'Type' : 'Context'}</dt><dd>{c.type}</dd></div>
+          <div><dt>Stack</dt><dd>{project.stackShort.join(', ')}</dd></div>
+        </dl>
+        <div class="case__links" data-reveal="fade" data-intro data-delay="0.5">
+          {c.links.map((l, i) => (
+            <a class:list={['btn', i === 0 ? 'btn--dark' : 'btn--line']} href={l.href} {...(external(l.href) ? { target: '_blank', rel: 'noopener' } : {})}>
+              {l.label} <span aria-hidden="true">{l.href.endsWith('.pdf') ? '↓' : '↗'}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </header>
+
+    <section class="cs cs--pipe" aria-label="How data flows">
+      <div class="wrap"><Pipeline nodes={project.pipeline} live large /></div>
+    </section>
+
+    {c.sections.map((s) => (
+      <section class="cs">
+        <h2 class="cs__h" data-split="lines">{s.heading}</h2>
+        <div class="cs__body prose">
+          {s.lead && <p class="cs__lead" set:html={s.lead} />}
+          <Fragment set:html={s.html} />
+        </div>
+      </section>
+    ))}
+
+    <section class="cs cs--wide">
+      <h2 class="cs__h" data-split="lines">Architecture</h2>
+      <figure class="cs__figure" data-reveal="clip">
+        <Diagram slug={project.slug} />
+        <figcaption>{c.diagramCaption}</figcaption>
+      </figure>
+    </section>
+
+    {c.shots && (
+      <section class="cs cs--wide">
+        <h2 class="cs__h" data-split="lines">In action</h2>
+        <div class="shots">
+          {c.shots.map((s) => (
+            <figure class="shot" data-reveal="clip">
+              <a class="shot__media" href={s.src} data-zoom>
+                <img src={s.src} alt={s.alt} width={s.width} height={s.height} loading="lazy" decoding="async" />
+                <span class="shot__hint" aria-hidden="true">Click to enlarge</span>
+              </a>
+              <figcaption set:html={s.caption} />
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="cs cs--wide">
+      <h2 class="cs__h" data-split="lines">{c.decisionsHeading}</h2>
+      <div class="decisions">
+        {c.decisions.map((d) => (
+          <div class="decision prose" data-reveal="up">
+            <h3>{d.heading}</h3>
+            <Fragment set:html={d.html} />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {c.extra?.map((s) => (
+      <section class="cs">
+        <h2 class="cs__h" data-split="lines">{s.heading}</h2>
+        <div class="cs__body prose"><Fragment set:html={s.html} /></div>
+      </section>
+    ))}
+
+    <section class="cs cs--wide">
+      <h2 class="cs__h" data-split="lines">{c.outcomeHeading ?? 'Outcome'}</h2>
+      {c.outcomeLead && <p class="cs__note" set:html={c.outcomeLead} />}
+      <ul class="results" style={`--len: ${Math.max(...c.results.map((r) => r.num.length))}`}>
+        {c.results.map((r, i) => (
+          <li class="result" data-reveal="up" data-delay={String(i * 0.06)}>
+            <span class="result__num">{r.num}</span>
+            <span class="result__label" set:html={r.label} />
+          </li>
+        ))}
+      </ul>
+      <h3 class="stack__h">Stack</h3>
+      <p class="stack">{c.stack.map((s) => <span class="tag">{s}</span>)}</p>
+    </section>
+
+    <nav class="next" aria-label="Next case study">
+      <a class="next__link" href={next.href}>
+        <span class="next__k">Next project</span>
+        <span class="next__title">{next.title}</span>
+        <span class="next__line">{next.oneLine}</span>
+      </a>
+    </nav>
+  </article>
+
+  {c.shots && (
+    <dialog class="lightbox" data-lightbox aria-label="Screenshot">
+      <figure class="lightbox__fig">
+        <img class="lightbox__img" alt="" width="1600" height="1000" />
+        <figcaption class="lightbox__cap"></figcaption>
+      </figure>
+      <div class="lightbox__bar">
+        <span class="lightbox__count" data-lightbox-count></span>
+        {c.shots.length > 1 && (
+          <>
+            <button type="button" class="btn btn--sm" data-lightbox-step="-1"><span class="btn__label">Previous</span></button>
+            <button type="button" class="btn btn--sm" data-lightbox-step="1"><span class="btn__label">Next</span></button>
+          </>
+        )}
+        <button type="button" class="btn btn--sm" data-lightbox-close><span class="btn__label">Close</span><span class="btn__arrow" aria-hidden="true">×</span></button>
+      </div>
+    </dialog>
+  )}
+</Base>

@@ -1,0 +1,32 @@
+---
+import { nav, site } from '../data/site';
+interface Props { home?: boolean }
+const { home = false } = Astro.props;
+const href = (h: string) => (home && h.startsWith('/#') ? h.slice(1) : h);
+---
+<header class="hd" data-header>
+  <div class="hd__inner wrap">
+    <a class="hd__brand" href="/" aria-current={home ? 'page' : undefined}>{site.name}</a>
+    <nav class="hd__nav" aria-label="Primary">
+      <ul>
+        {nav.map((n) => <li><a class="hd__link" href={href(n.href)}>{n.label}</a></li>)}
+      </ul>
+    </nav>
+    <a class="btn btn--sm hd__resume" href={site.resume} target="_blank" rel="noopener">Resume<span class="sr-only"> (PDF, opens in a new tab)</span></a>
+    <button class="hd__menu" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu" data-menu-toggle>
+      <span class="hd__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+  </div>
+</header>
+<nav id="menu" class="menu" aria-label="Menu" hidden data-menu>
+  <ul class="menu__list">
+    {nav.map((n) => <li class="menu__item"><a href={href(n.href)} data-menu-link>{n.label}</a></li>)}
+    <li class="menu__item"><a href={site.resume} target="_blank" rel="noopener" data-menu-link>Resume<span class="sr-only"> (PDF, opens in a new tab)</span></a></li>
+  </ul>
+  <div class="menu__foot">
+    <a href={`mailto:${site.email}`} data-menu-link>{site.email}</a>
+    <ul class="menu__socials">
+      {site.socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener" data-menu-link>{s.label}</a></li>)}
+    </ul>
+  </div>
+</nav>

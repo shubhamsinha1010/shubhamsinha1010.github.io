@@ -1,0 +1,66 @@
+@font-face {
+  font-family: 'Nunito';
+  src: url('/fonts/nunito-200_1000-normal.woff2') format('woff2');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Metric-matched fallback so the swap does not shift the hero. */
+@font-face {
+  font-family: 'Nunito Fallback';
+  src: local('Arial');
+  size-adjust: 101%;
+  ascent-override: 99%;
+  descent-override: 35%;
+}
+
+:root {
+  /* Dark teal field, lighter teal panels, one coral, warm sand for light panels.
+     Coral is too light for white text, so anything sitting on it uses --c-on-accent. */
+  --c-bg: #0e2a2e;
+  --c-fg: #ffffff;
+  --c-muted: #b9d3d0;
+  --c-line: rgb(255 255 255 / 0.16);
+  --c-plum: #174148;
+  --c-plum-2: #12363b;
+  --c-accent: #ff6b5b;
+  --c-on-accent: #0e2a2e;
+  --c-accent-text: #ff8f82;
+  --c-cream: #fbf1ea;
+  --c-on-cream: #0e2a2e;
+  --c-on-cream-muted: #44595b;
+  --c-curtain: #ff6b5b;
+  --c-ink-bg: #174148;
+  --c-ink-fg: #ffffff;
+
+  --f-display: 'Nunito', 'Nunito Fallback', system-ui, sans-serif;
+  --f-body: 'Nunito', 'Nunito Fallback', system-ui, sans-serif;
+
+  --t-mega: clamp(4.5rem, 1rem + 17vw, 19rem);
+  --t-xxl: clamp(2.8rem, 1.4rem + 5.4vw, 6.4rem);
+  --t-xl: clamp(2.2rem, 1.3rem + 3.4vw, 4.4rem);
+  --t-l: clamp(1.6rem, 1.15rem + 1.6vw, 2.6rem);
+  --t-m: clamp(1.15rem, 1.02rem + 0.5vw, 1.45rem);
+  --t-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --t-s: 0.9375rem;
+  --t-xs: 0.8125rem;
+
+  --u: clamp(0.5rem, 0.35rem + 0.6vw, 1rem);
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 3.25rem);
+  --max: 82rem;
+
+  --r-s: 6px;
+  --r-m: 14px;
+  --r-l: 28px;
+
+  --z-gl: 0;
+  --z-content: 1;
+  --z-header: 50;
+  --z-cursor: 80;
+  --z-curtain: 90;
+  --z-loader: 100;
+
+  --ease-commit: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
